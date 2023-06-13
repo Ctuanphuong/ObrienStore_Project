@@ -1,0 +1,38 @@
+{
+  "name": "api_obrien",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --exec ./node_modules/.bin/babel-node ./src/app.js",
+    "build": "npm run clean && npm run build-babel",
+    "clean": "del /S /Q build && mkdir build",
+    "build-babel": "babel ./src -d ./build/src",
+    "production": "npm run build && node ./build/src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.6.0",
+    "mongoose": "^7.2.3",
+    "nodemailer": "^6.9.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/node": "^7.22.5",
+    "@babel/plugin-transform-runtime": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22"
+  }
+}
