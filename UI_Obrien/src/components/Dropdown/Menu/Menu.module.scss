@@ -1,0 +1,160 @@
+.menu-item {
+  padding: 10px 20px;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  text-transform: capitalize;
+  font-family: var(--font-Poppins);
+  line-height: 18px;
+  color: #454545;
+  font-size: 14px;
+  font-weight: 400;
+  transition: 0.3s;
+  border-radius: none !important;
+  background-color: transparent;
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.active {
+  color: var(--primary-color);
+}
+.wrap-cart-items {
+  width: 350px;
+  padding: 0px 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cart-img {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  margin-right: 15px;
+  max-width: 70px;
+  height: 70px;
+  overflow: hidden;
+}
+
+.cart-img img {
+  max-width: 100%;
+  height: 70px;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.cart-content {
+  flex: 1;
+}
+
+.cart-content h5 a {
+  padding-bottom: 10px;
+  font-size: 15px;
+  transition: 0.3s;
+  text-transform: capitalize;
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.cart-text-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #303030;
+}
+.price {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e98c81;
+}
+
+.cart-btn svg {
+  font-size: 13px;
+  transition: 0.3s;
+  &:hover {
+    cursor: pointer;
+    color: #e98c81;
+  }
+}
+
+.wrap-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  padding: 20px 0;
+  border-top: 1px solid #d8d8d8;
+  border-bottom: 1px solid #d8d8d8;
+  margin: 20px 0;
+
+  p {
+    font-family: var(--font-Oswald);
+    color: var(--primary-color);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+
+.wrap-btn-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrap-btn-cart a:not(:last-child) {
+  margin-right: 5px;
+}
+
+//logout
+.logout-area {
+  padding: 10px 20px 0px;
+}
+.wrap-btn-logout {
+  padding-top: 15px;
+  border-top: 1px solid #d8d8d8;
+}
+
+.logout-area button {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  transition: 0.3s;
+
+  &:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+
+.logout-icon {
+  margin-left: 15px;
+}
+
+.hello {
+  padding: 0px 20px 7px;
+
+  span {
+    font-family: var(--font-Oswald);
+    font-size: 13px;
+  }
+
+  .handwave {
+    font-size: 17px;
+  }
+
+  .greet {
+    font-family: var(--font-Poppins);
+  }
+}

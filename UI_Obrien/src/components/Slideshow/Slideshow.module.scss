@@ -1,0 +1,104 @@
+.wrapper {
+  width: 100%;
+  padding: 0px;
+}
+
+.banner {
+  position: relative;
+}
+
+.banner img {
+  width: 100%;
+}
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.content {
+  position: absolute;
+  top: 70px;
+  transform: translateY(50%);
+}
+
+//animations of small-title
+.small-title {
+  font-family: var(--font-Oswald);
+  font-weight: 400;
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.animate {
+  animation: bounceLeft 2s ease-in-out;
+  @keyframes bounceLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(200px);
+    }
+    50% {
+      transform: translateX(0px);
+    }
+    75% {
+      transform: translateX(30px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+}
+
+//animations of large-title
+.large-title {
+  font-family: var(--font-Oswald);
+  font-size: 72px;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.animate-2 {
+  animation: fly-in 2s;
+
+  @keyframes fly-in {
+    0% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+//animations of btn-shop
+.btn-shop {
+  position: relative;
+}
+
+.animate-3 {
+  animation: fly-in 2s backwards;
+
+  @keyframes fly-in {
+    0% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+//when have notice header, show this css class
+.have-notice {
+  padding-top: 143px;
+}

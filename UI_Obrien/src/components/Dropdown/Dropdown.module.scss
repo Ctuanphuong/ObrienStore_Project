@@ -1,0 +1,19 @@
+.wrapper {
+  background: #ffffff;
+  padding: 20px 0 24px;
+  min-width: 200px;
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 0.8s forwards;
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
