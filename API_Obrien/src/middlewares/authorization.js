@@ -1,4 +1,4 @@
-const authorization = async (req, res, next) => {
+export const authorization = async (req, res, next) => {
   try {
     const user = req.user;
 
@@ -13,4 +13,4 @@ const authorization = async (req, res, next) => {
     });
   }
 };
-export default authorization;
+

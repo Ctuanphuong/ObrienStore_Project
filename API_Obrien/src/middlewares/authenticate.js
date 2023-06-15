@@ -6,8 +6,9 @@ dotenv.config();
 const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader)
+    if (!authHeader) {
       throw new Error("You must be logged in to perform this action!");
+    }
 
     const accessToken = authHeader && authHeader.split(" ")[1];
 
