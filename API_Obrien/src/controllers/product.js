@@ -1,5 +1,6 @@
 import Product from "../models/product.js";
 import Category from "../models/category.js";
+import { productSchema } from "../schemas/product.js";
 
 // GET LIST PRODUCT
 export const getProducts = async (req, res) => {
@@ -45,7 +46,7 @@ export const getProducts = async (req, res) => {
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById({ _id: id });
+    const product = await Product.findById({ _id: id }).populate("categoryId");
     if (!product) {
       return res.status(400).json({
         message: "There are no product in the list!",
@@ -65,6 +66,15 @@ export const getProduct = async (req, res) => {
 // ADD PRODUCT
 export const addProduct = async (req, res) => {
   try {
+    // Validate các trường dữ liệu trước khi thêm mới sản phẩm
+    const { error } = productSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
+
     const product = await Product.create(req.body);
 
     // sau khi thêm sản phẩm xong, push luôn _id của sản phẩm đó vào mảng "products" của danh mục tương ứng
@@ -96,6 +106,15 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { categoryId } = req.body;
+
+    // Validate các trường dữ liệu trước khi cập nhật mới sản phẩm
+    const { error } = productSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
 
     // Kiểm tra xem sản phẩm có tồn tại không
     const product = await Product.findById(id);
@@ -156,12 +175,30 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const productDeleted = await Product.findByIdAndDelete({ _id: id });
-    if (!productDeleted) {
+
+    // Tìm sản phẩm cần xóa
+    const product = await Product.findById(id);
+    if (!product) {
       return res.status(400).json({
         message: "Can't find the product to delete!",
       });
     }
+
+    // Tìm danh mục tương ứng với category của sản phẩm
+    const category = await Category.findById(product.categoryId);
+    if (!category) {
+      return res.status(400).json({
+        message: "Category does not exist!",
+      });
+    }
+
+    // Xóa id sản phẩm khỏi mảng products của danh mục
+    category.products.pull(id);
+    await category.save();
+
+    // Xóa sản phẩm
+    await Product.findByIdAndDelete(id);
+
     return res.status(200).json({
       message: "Product delete successfully!",
     });

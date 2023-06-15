@@ -1,6 +1,6 @@
 import Category from "../models/category.js";
 import Product from "../models/product.js";
-
+import { categorySchema } from "../schemas/category.js";
 // GET LIST CATEGORY
 export const getCategories = async (req, res) => {
   try {
@@ -40,12 +40,14 @@ export const getCategories = async (req, res) => {
 export const getCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const category = await Category.findById({ _id: id });
+    const category = await Category.findById({ _id: id }).populate("products");
     if (!category) {
       return res.status(400).json({
         message: "There are no category in the list!",
       });
     }
+
+    console.log(category);
     return res.status(200).json({
       message: "Get the category successfully!",
       category,
@@ -61,6 +63,15 @@ export const getCategory = async (req, res) => {
 export const addCategory = async (req, res) => {
   try {
     const { name } = req.body;
+
+    // Validate các trường dữ liệu trước khi thêm mới danh mục
+    const { error } = categorySchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
 
     // kiểm tra có tồn tại tên danh mục nào trong db giống với tên danh mục gửi lên ko
     // sử dụng biểu thức chính quy chuyển name về lower case để so sánh
@@ -98,6 +109,16 @@ export const addCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Validate các trường dữ liệu trước khi thêm mới sản phẩm
+    const { error } = categorySchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
+
     const categoryUpdated = await Category.findByIdAndUpdate(
       { _id: id },
       req.body,

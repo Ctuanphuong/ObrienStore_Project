@@ -3,7 +3,7 @@ import paginate from "mongoose-paginate-v2";
 
 const categorySchema = new Schema(
   {
-    name: { type: String, minLength: 3, required: true },
+    name: { type: String, required: true },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   },
   { timestamps: true, versionKey: false }

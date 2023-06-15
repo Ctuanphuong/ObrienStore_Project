@@ -4,11 +4,21 @@ import {
   generalAccessToken,
   generalRefreshToken,
 } from "../services/jwtService.js";
+import { registerSchema, loginSchema } from "../schemas/auth.js";
 
 // REGISTER
 export const Register = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
+
+    // Validate các trường dữ liệu trước khi đăng ký
+    const { error } = registerSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
 
     // kiểm tra xem email đăng ký đã tồn tại trong db chưa
     const userExists = await User.findOne({ email });
@@ -59,6 +69,15 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Validate các trường dữ liệu trước khi đăng nhập
+    const { error } = loginSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errArr = error.details.map((e) => e.message);
+      return res.status(400).json({
+        "Validate error": errArr,
+      });
+    }
 
     // kiểm tra xem tài khoản có tồn tại hay không
     const user = await User.findOne({ email });
