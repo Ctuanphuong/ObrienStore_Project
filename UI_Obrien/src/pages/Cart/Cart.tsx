@@ -1,13 +1,47 @@
 import BreadCrumbs from '~/components/BreadCrumbs'
 import styles from './Cart.module.scss'
+import axios from 'axios'
 
 import classNames from 'classnames/bind'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import Button from '~/components/Button/Button'
+import { useEffect, useState } from 'react'
 const cx = classNames.bind(styles)
 const Cart = () => {
+  //updateCart
+  const updateCart = async (userId: any, productId: any, quantity: any) => {
+    try {
+      const res = await axios.put('http://localhost:8000/api/cart/update', {
+        userId: userId,
+        productId: productId,
+        quantity: quantity
+      })
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const [quantity, setQuantity] = useState(1)
+
+  useEffect(() => {}, [])
+
+  const onHandleDecrease = () => {
+    if (quantity > 1) {
+      const newQuantity = quantity - 1
+      setQuantity(newQuantity)
+      updateCart('648f4b97fb0d9cd53dde08ff', '648b317b52b8d62dcec27c82', newQuantity)
+    }
+  }
+
+  const onHandleIncrease = () => {
+    const newQuantity = quantity + 1
+    setQuantity(newQuantity)
+    updateCart('648f4b97fb0d9cd53dde08ff', '648b317b52b8d62dcec27c82', newQuantity)
+  }
+
   return (
     <>
       <BreadCrumbs title={'Shopping Cart'} page={'Cart'} />
@@ -50,11 +84,11 @@ const Cart = () => {
                     <td className={cx('pro-quantity')}>
                       <div className={cx('quantity')}>
                         <div className={cx('cart-mini')}>
-                          <input type='text' defaultValue={1} />
-                          <button className={cx('btn-desc')}>
+                          <input type='text' value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value))} />
+                          <button className={cx('btn-desc')} onClick={onHandleDecrease}>
                             <FontAwesomeIcon icon={faMinus} />
                           </button>
-                          <button className={cx('btn-plus')}>
+                          <button className={cx('btn-plus')} onClick={onHandleIncrease}>
                             <FontAwesomeIcon icon={faPlus} />
                           </button>
                         </div>

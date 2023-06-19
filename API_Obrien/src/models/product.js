@@ -17,6 +17,7 @@ const productSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
+    coupon: String,
     rating: { type: Number, default: 0 },
   },
   { timestamps: true, versionKey: false }

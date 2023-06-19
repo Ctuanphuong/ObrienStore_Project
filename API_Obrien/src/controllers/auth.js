@@ -9,7 +9,7 @@ import { registerSchema, loginSchema } from "../schemas/auth.js";
 // REGISTER
 export const Register = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, password, avatar, address } = req.body;
 
     // Validate các trường dữ liệu trước khi đăng ký
     const { error } = registerSchema.validate(req.body, { abortEarly: false });
@@ -41,6 +41,8 @@ export const Register = async (req, res) => {
       name,
       email,
       phone,
+      avatar,
+      address,
       password: hashedPassword,
     });
 
@@ -59,7 +61,7 @@ export const Register = async (req, res) => {
       user,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -115,7 +117,7 @@ export const Login = async (req, res) => {
       refreshToken,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -144,7 +146,7 @@ export const refreshToken = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }

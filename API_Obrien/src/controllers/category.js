@@ -30,7 +30,7 @@ export const getCategories = async (req, res) => {
       categories,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -53,7 +53,7 @@ export const getCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -99,7 +99,7 @@ export const addCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -136,7 +136,7 @@ export const updateCategory = async (req, res) => {
       category: categoryUpdated,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -212,7 +212,7 @@ export const deleteCategory = async (req, res) => {
       message: "Category delete successfully!",
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }

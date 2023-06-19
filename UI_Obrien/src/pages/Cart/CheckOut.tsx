@@ -119,21 +119,21 @@ const CheckOut = () => {
                 <div className={cx('checkout-payment-method')}>
                   <div className={cx('accordion')}>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='bank_transfer' name='radio-group' />
+                      <input type='radio' id='bank_transfer' name='paymentMethod' />
                       <label htmlFor='bank_transfer'>Direct Bank Transfer</label>
                     </div>
 
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='momo' name='radio-group' />
+                      <input type='radio' id='momo' name='paymentMethod' />
                       <label htmlFor='momo'>Via Momo</label>
                     </div>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='paypal' name='radio-group' />
+                      <input type='radio' id='paypal' name='paymentMethod' />
                       <label htmlFor='paypal'>Via Paypal</label>
                     </div>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='cod' name='radio-group' />
-                      <label htmlFor='cod'>COD (Cash on delivery)</label>
+                      <input type='radio' id='cod' name='paymentMethod' />
+                      <label htmlFor='cod'>COD (Cash On Delivery)</label>
                     </div>
                   </div>
                   <div className={cx('order-btn-payment')}>

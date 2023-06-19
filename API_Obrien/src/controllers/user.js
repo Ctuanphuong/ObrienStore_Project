@@ -22,7 +22,7 @@ export const getUserProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -72,7 +72,7 @@ export const updateUserProfile = async (req, res) => {
       user: userUpdated,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -93,7 +93,7 @@ export const deleteUser = async (req, res) => {
       message: "Account deleted successfully!",
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -147,7 +147,7 @@ export const changePassword = async (req, res) => {
       userChangedPassword,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -197,7 +197,7 @@ export const forgotPassword = async (req, res) => {
       message: `Password reset code has been sent to your email. Please check.`,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -219,7 +219,7 @@ export const verifyToken = async (req, res, next) => {
     req.email = email;
     next();
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -249,7 +249,7 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({ message: "Password reset successfully!" });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }

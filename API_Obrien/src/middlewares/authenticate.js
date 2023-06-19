@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import dotenv from "dotenv";
-import { generalVerifyToken } from "../services/JwtService.js";
+import { generalVerifyToken } from "../services/jwtService.js";
 dotenv.config();
 const authenticate = async (req, res, next) => {
   try {
@@ -27,7 +27,7 @@ const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    return res.status(400).json({
+    return res.status(500).json({
       message: error.message,
     });
   }
