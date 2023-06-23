@@ -1,28 +1,34 @@
 import Category from "../models/category.js";
 import Product from "../models/product.js";
-import { categorySchema } from "../schemas/category.js";
+import { categorySchema, categoryUpdateSchema } from "../schemas/category.js";
 // GET LIST CATEGORY
 export const getCategories = async (req, res) => {
+  const {
+    page = 1,
+    limit = 5,
+    order = "asc",
+    sort = "createdAt",
+    keywords = "",
+  } = req.query;
+
+  const options = {
+    page: page,
+    limit: limit,
+    sort: {
+      [sort]: order === "asc" ? 1 : -1,
+    },
+  };
+
   try {
-    const {
-      page = 1,
-      limit = 5,
-      order = "asc",
-      sort = "createdAt",
-    } = req.query;
+    const query = {};
+    if (keywords) {
+      query.$text = { $search: keywords };
+    }
 
-    const options = {
-      page: page,
-      limit: limit,
-      sort: {
-        [sort]: order === "asc" ? 1 : -1,
-      },
-    };
-
-    const categories = await Category.paginate({}, options);
+    const categories = await Category.paginate(query, options);
     if (categories.length === 0 || categories.docs.length === 0) {
       return res.status(400).json({
-        message: "There are no categories in the list!",
+        message: "Couldn't find any categories in the list!",
       });
     }
     return res.status(200).json({
@@ -62,8 +68,8 @@ export const getCategory = async (req, res) => {
 // ADD CATEGORY
 export const addCategory = async (req, res) => {
   try {
-    const { name } = req.body;
-
+    let { name } = req.body;
+    name = name.trim();
     // Validate các trường dữ liệu trước khi thêm mới danh mục
     const { error } = categorySchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -109,9 +115,12 @@ export const addCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-
+    let { name } = req.body;
+    name = name.trim();
     // Validate các trường dữ liệu trước khi thêm mới sản phẩm
-    const { error } = categorySchema.validate(req.body, { abortEarly: false });
+    const { error } = categoryUpdateSchema.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       const errArr = error.details.map((e) => e.message);
       return res.status(400).json({

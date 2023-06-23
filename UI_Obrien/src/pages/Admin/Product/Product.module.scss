@@ -1,0 +1,66 @@
+.title-product {
+  font-size: 30px;
+  text-align: center;
+  padding: 10px 0px;
+  color: #002140;
+  text-transform: capitalize;
+}
+
+.btn-primary {
+  background-color: #06b6d4;
+  padding: 8px 12px;
+  color: #fff;
+  box-shadow: 0 8px 15px -3px #06b6d4, 0 4px 6px -4px #06b6d4;
+  border-radius: 5px;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    color: #fff;
+    background-color: #3b82f6;
+    box-shadow: 0 8px 15px -3px #3b82f6, 0 4px 6px -4px #3b82f6;
+  }
+}
+
+.row {
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+//PAGINATION
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.pagination button {
+  color: black;
+  float: left;
+  margin: 0 5px;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button.active-pag {
+  background-color: #06b6d4;
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination button:hover:not(.active-pag) {
+  background-color: #ddd;
+  border-radius: 5px;
+}
+
+.pagination button[disabled] {
+  background-color: #f7f5f5;
+  color: #00000057;
+  border-radius: 5px;
+  pointer-events: none;
+}

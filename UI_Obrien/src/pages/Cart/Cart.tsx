@@ -20,7 +20,7 @@ const Cart = () => {
       })
       console.log(res)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

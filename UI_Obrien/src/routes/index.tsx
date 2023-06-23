@@ -1,3 +1,8 @@
+import CategoryCreate from '~/pages/Admin/Category/CategoryCreate'
+import CategoryList from '~/pages/Admin/Category/CategoryList'
+import CategoryUpdate from '~/pages/Admin/Category/CategoryUpdate'
+import DashBoard from '~/pages/Admin/DashBoard'
+import { ProductCreate, ProductList, ProductUpdate } from '~/pages/Admin/Product'
 import Login from '~/pages/Auth/Login'
 import Register from '~/pages/Auth/Register'
 import Cart from '~/pages/Cart'
@@ -27,6 +32,43 @@ export const publicRoutes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register }
 ]
-export const privateRoutes = [{
-  path: '/admin'
-}]
+export const privateRoutes = [
+  {
+    path: '/admin',
+    component: DashBoard
+  },
+  {
+    path: '/admin/dashboard',
+    component: DashBoard
+  },
+
+  // Product path
+  {
+    path: '/admin/products',
+    component: ProductList
+  },
+  {
+    path: '/admin/products/create',
+    component: ProductCreate
+  },
+  {
+    path: '/admin/products/update/:id',
+    component: ProductUpdate
+  },
+  // End Product path
+
+  // Category path
+  {
+    path: '/admin/categories',
+    component: CategoryList
+  },
+  {
+    path: '/admin/categories/create',
+    component: CategoryCreate
+  },
+  {
+    path: '/admin/categories/update/:id',
+    component: CategoryUpdate
+  }
+  // End Category path
+]

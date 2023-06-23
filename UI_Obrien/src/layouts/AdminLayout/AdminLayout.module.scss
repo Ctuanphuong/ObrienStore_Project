@@ -1,0 +1,24 @@
+.demo-logo-vertical {
+  padding: 10px;
+  text-align: center;
+  overflow: hidden;
+  h3 {
+    font-family: var(--font-Poppins);
+    font-size: 20px;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 700;
+    background-color: #ffffff33;
+    padding: 10px 0px;
+  }
+}
+
+.ant-menu-submenu-title {
+  color: #fff;
+}
+
+.divider {
+  margin-top: 10px;
+  background-color: #303030;
+  margin-bottom: 10px;
+}

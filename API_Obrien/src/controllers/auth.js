@@ -46,15 +46,7 @@ export const Register = async (req, res) => {
       password: hashedPassword,
     });
 
-    /*create accessToken
-    // const accessToken = await generalAccessToken({
-    //   _id: user._id,
-    //   email,
-    //   password: user.password,
-   }); */
-
-    // để role và password là undefined vì không muốn trả về khi thông báo thành công
-    user.role = undefined;
+    // để  password là undefined vì không muốn trả về khi thông báo thành công
     user.password = undefined;
     return res.status(200).json({
       message: "Account register successfully!",

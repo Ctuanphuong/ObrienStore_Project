@@ -18,6 +18,12 @@ export const uploadImage = async (req, res) => {
     // Chờ cho tất cả các file đều được upload lên Cloudinary
     const results = await Promise.all(uploadPromises);
 
+    if (!results) {
+      throw new Error(
+        "The image has not been loaded yet. Please wait a The image has not been loaded yet. Please wait a few seconds..."
+      );
+    }
+
     // Trả về kết quả là một mảng các đối tượng chứa thông tin của các file đã upload lên Cloudinary
     const uploadedFiles = results.map((result) => ({
       url: result.secure_url,

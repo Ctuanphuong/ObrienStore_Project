@@ -36,20 +36,14 @@ const CheckOut = () => {
           {/* row 1 */}
 
           {/* row 2 */}
-          <div className={cx('row-2-checkout')}>
+          <form className={cx('row-2-checkout')}>
             <div className={cx('bill-detail-wrapper')}>
-              <form action=''>
+              <div>
                 <h3>BILLING DETAILS</h3>
                 <div className={cx('row-bill')}>
-                  <div className={cx('wrap-input')}>
-                    <div className={cx('checkout-for-list', 'col-md-6')}>
-                      <label htmlFor='first_name'>First Name*</label>
-                      <input type='text' id='first_name' />
-                    </div>
-                    <div className={cx('checkout-for-list', 'col-md-6')}>
-                      <label htmlFor='last_name'>Last Name*</label>
-                      <input type='text' id='last_name' />
-                    </div>
+                  <div className={cx('checkout-for-list', 'col-md-12')}>
+                    <label htmlFor='name'>Full Name*</label>
+                    <input type='text' id='name' name='name' />
                   </div>
                   <div className={cx('checkout-for-list', 'col-md-12')}>
                     <label htmlFor='address'>Address*</label>
@@ -75,7 +69,7 @@ const CheckOut = () => {
                     ></textarea>
                   </div>
                 </div>
-              </form>
+              </div>
             </div>
             <div className={cx('bill-checkout')}>
               <div className={cx('your-order')}>
@@ -105,11 +99,18 @@ const CheckOut = () => {
                           <span>£215.00</span>
                         </td>
                       </tr>
+                      <tr>
+                        <th>Shipping Fee</th>
+                        <td>
+                          <span>$10</span>
+                        </td>
+                      </tr>
+
                       <tr className={cx('order-total')}>
                         <th>Order Total</th>
                         <td className={cx('total-price')}>
                           <strong>
-                            <span>£215.00</span>
+                            <span>£225.00</span>
                           </strong>
                         </td>
                       </tr>
@@ -119,20 +120,20 @@ const CheckOut = () => {
                 <div className={cx('checkout-payment-method')}>
                   <div className={cx('accordion')}>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='bank_transfer' name='paymentMethod' />
+                      <input type='radio' id='bank_transfer' name='paymentMethod' value={'bank'} />
                       <label htmlFor='bank_transfer'>Direct Bank Transfer</label>
                     </div>
 
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='momo' name='paymentMethod' />
+                      <input type='radio' id='momo' name='paymentMethod' value={'momo'} />
                       <label htmlFor='momo'>Via Momo</label>
                     </div>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='paypal' name='paymentMethod' />
+                      <input type='radio' id='paypal' name='paymentMethod' value={'paypal'} />
                       <label htmlFor='paypal'>Via Paypal</label>
                     </div>
                     <div className={cx('option-payment')}>
-                      <input type='radio' id='cod' name='paymentMethod' />
+                      <input type='radio' id='cod' name='paymentMethod' value={'cod'} />
                       <label htmlFor='cod'>COD (Cash On Delivery)</label>
                     </div>
                   </div>
@@ -142,7 +143,7 @@ const CheckOut = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </form>
           {/* row 2 */}
         </div>
       </div>

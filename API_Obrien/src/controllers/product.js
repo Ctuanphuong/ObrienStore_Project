@@ -1,34 +1,41 @@
 import Product from "../models/product.js";
 import Category from "../models/category.js";
-import { productSchema } from "../schemas/product.js";
+import { productSchema, productSchemaUpdate } from "../schemas/product.js";
 
 // GET LIST PRODUCT
 export const getProducts = async (req, res) => {
+  const {
+    page = 1,
+    limit = 5,
+    order = "asc",
+    sort = "createdAt",
+    keywords = "",
+  } = req.query;
+
+  // Tạo 1 object tên "options" bao gồm những lựa chọn phân trang
+  // page: trang sản phẩm hiện tại, limit: tối đa số lượng sản phẩm trên 1 trang,
+  // order: sắp xếp theo "asc" hoặc "desc" (chỉ có 2 kiểu này)
+  // sort: tùy chọn trường để sort với cú pháp {[key]: value}, ở đây để sort trong ngoặc vuông
+  // Vì muốn lấy value của sort để làm key và lấy order làm value và có 2 lựa chọn là "asc" hoặc "desc"
+
+  const options = {
+    page: page,
+    limit: limit,
+    sort: {
+      [sort]: order === "asc" ? 1 : -1,
+    },
+  };
+
   try {
-    const {
-      page = 1,
-      limit = 9,
-      order = "asc",
-      sort = "createdAt",
-    } = req.query;
+    const query = {};
+    if (keywords) {
+      query.$text = { $search: keywords };
+    }
 
-    // Tạo 1 object tên "options" bao gồm những lựa chọn phân trang
-    // page: trang sản phẩm hiện tại, limit: tối đa số lượng sản phẩm trên 1 trang,
-    // order: sắp xếp theo "asc" hoặc "desc" (chỉ có 2 kiểu này)
-    // sort: tùy chọn trường để sort với cú pháp {[key]: value}, ở đây để sort trong ngoặc vuông
-    // Vì muốn lấy value của sort để làm key và lấy order làm value và có 2 lựa chọn là "asc" hoặc "desc"
-
-    const options = {
-      page: page,
-      limit: limit,
-      sort: {
-        [sort]: order === "asc" ? 1 : -1,
-      },
-    };
-    const products = await Product.paginate({}, options);
+    const products = await Product.paginate(query, options);
     if (products.length === 0 || products.docs.length === 0) {
       return res.status(400).json({
-        message: "There are no products in the list!",
+        message: "Couldn't find any products in the list!",
       });
     }
     return res.status(200).json({
@@ -66,12 +73,26 @@ export const getProduct = async (req, res) => {
 // ADD PRODUCT
 export const addProduct = async (req, res) => {
   try {
+    let { name, description } = req.body;
+    name = name.trim();
+    description = description.trim();
     // Validate các trường dữ liệu trước khi thêm mới sản phẩm
     const { error } = productSchema.validate(req.body, { abortEarly: false });
     if (error) {
       const errArr = error.details.map((e) => e.message);
       return res.status(400).json({
         "Validate error": errArr,
+      });
+    }
+
+    const nameExists = await Product.findOne({
+      name: { $regex: new RegExp("^" + name + "$", "i") },
+    });
+
+    if (nameExists) {
+      return res.status(400).json({
+        message:
+          "This product name already exists! Please choose another name.",
       });
     }
 
@@ -105,10 +126,14 @@ export const addProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { categoryId } = req.body;
+    let { categoryId, name, description } = req.body;
+    name = name.trim();
+    description = description.trim();
 
     // Validate các trường dữ liệu trước khi cập nhật mới sản phẩm
-    const { error } = productSchema.validate(req.body, { abortEarly: false });
+    const { error } = productSchemaUpdate.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       const errArr = error.details.map((e) => e.message);
       return res.status(400).json({
