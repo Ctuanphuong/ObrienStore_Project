@@ -10,9 +10,13 @@ const CartProvider = () => {
   const [userId, setUserId] = useState('')
   const [reloadCart, setReloadCart] = useState(false)
 
+  console.log(cart)
+
   useEffect(() => {
     ;(async () => {
       try {
+        console.log('ehehee')
+
         if (userId) {
           const { data } = await getCartUser(userId)
           const { products } = data.cart
@@ -29,6 +33,7 @@ const CartProvider = () => {
   const onAddToCart = async (dataCart: IAddToCart) => {
     try {
       const { data } = await addToCart(dataCart)
+      await setReloadCart(!reloadCart)
       message.success(`${data.message}`)
     } catch (error) {
       message.error(`An error has occurred. Please try again`)
