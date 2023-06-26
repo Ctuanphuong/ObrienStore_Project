@@ -57,3 +57,10 @@
   object-fit: cover;
   vertical-align: middle;
 }
+
+.disabled-options {
+  pointer-events: none;
+  user-select: none;
+  color: black;
+  opacity: 30%;
+}

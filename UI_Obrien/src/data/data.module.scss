@@ -6,6 +6,7 @@
   border: 1px solid #43ddf8;
 }
 .product-name {
+  text-transform: capitalize;
   font-weight: 600;
 }
 .product-price {
@@ -69,6 +70,7 @@
 }
 
 .categoryInfo {
+  text-transform: capitalize;
   color: #06b6d4;
   font-weight: 500;
 }

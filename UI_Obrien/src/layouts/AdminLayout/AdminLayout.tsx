@@ -1,19 +1,30 @@
 import { useState } from 'react'
-import { Breadcrumb, Divider, Layout, Menu, theme, Input, Space } from 'antd'
+import { Breadcrumb, Divider, Layout, Menu, theme } from 'antd'
 import styles from './AdminLayout.module.scss'
 import classNames from 'classnames/bind'
-import { items, items2 } from '~/data/itemsHeaderAdmin'
+import { items, settingSideItems } from '~/data/itemsHeaderAdmin'
+import { useNavigate } from 'react-router-dom'
+
+import getDecodedUser from '~/components/Auth/getDecodedUser'
 const cx = classNames.bind(styles)
 
 const { Header, Content, Footer, Sider } = Layout
-const { Search } = Input
 
-const AdminLayout = ({ children }: any) => {
+const AdminLayout = ({ children }: any): any => {
+  const navigate = useNavigate()
+
+  const user = getDecodedUser()
+
   //default table of ANTD
   const [collapsed, setCollapsed] = useState(false)
   const {
     token: { colorBgContainer }
   } = theme.useToken()
+
+  if (!user || (user && user.role !== 'admin')) {
+    // window.location.replace('/page-not-authorization')
+    return navigate('/page-not-authorization')
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -23,7 +34,7 @@ const AdminLayout = ({ children }: any) => {
         </div>
         <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline' items={items} />
         <Divider className={cx('divider')} />
-        <Menu theme='dark' mode='inline' items={items2} />
+        <Menu theme='dark' mode='inline' items={settingSideItems()} />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }} />

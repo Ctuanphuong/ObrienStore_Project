@@ -8,12 +8,13 @@ import styles from './Header.module.scss'
 import classNames from 'classnames/bind'
 import MenuDropdown from '~/components/Dropdown/Menu'
 import { products } from '~/data/products'
-import { menuLogged } from '~/data/menuLogged'
 import images from '~/assets/images'
+import getDecodedUser from '~/components/Auth/getDecodedUser'
 
 const cx = classNames.bind(styles)
 const Header = () => {
   const [headerTop, setHeaderTop] = useState('block')
+  const user = getDecodedUser()
 
   useEffect(() => {
     if (window.location.pathname === '/') {
@@ -27,6 +28,7 @@ const Header = () => {
     setHeaderTop('none')
   }
 
+  const defaultUserImage = 'https://cdn-icons-png.flaticon.com/512/1053/1053244.png'
   //show or hide header notice at home page
   const getNotice = () => {
     if (window.location.pathname === '/') {
@@ -87,28 +89,30 @@ const Header = () => {
               <div className={cx('right-menu')}>
                 <nav>
                   <ul>
-                    <li>
-                      <NavLink to={'/login'} className={({ isActive }) => cx({ active: isActive })}>
-                        Login
-                      </NavLink>
-                      <span className={cx('block-center')}>|</span>
-                      <NavLink to={'/register'} className={({ isActive }) => cx({ active: isActive })}>
-                        Register
-                      </NavLink>
-                    </li>
-
                     {/* menu when user logged */}
-                    {/* <MenuDropdown menuloggedItems={menuLogged} offset={[-20, 28]}>
-                      <li style={{ marginRight: '10px' }}>
-                        <a>
-                          <img src={images.header.userAvatar} alt="User's avatar" className={cx('avatar')} />
-                        </a>
+                    {user ? (
+                      <MenuDropdown offset={[-20, 28]} user={user}>
+                        <li style={{ marginRight: '10px' }}>
+                          <a>
+                            <img src={user.avatar || defaultUserImage} alt="User's avatar" className={cx('avatar')} />
+                          </a>
+                        </li>
+                      </MenuDropdown>
+                    ) : (
+                      <li>
+                        <NavLink to={'/login'} className={({ isActive }) => cx({ active: isActive })}>
+                          Login
+                        </NavLink>
+                        <span className={cx('block-center')}>|</span>
+                        <NavLink to={'/register'} className={({ isActive }) => cx({ active: isActive })}>
+                          Register
+                        </NavLink>
                       </li>
-                    </MenuDropdown> */}
+                    )}
 
                     <MenuDropdown cartItems={products} offset={[-160, 34]}>
                       <li>
-                        <NavLink to='/cart' className={({ isActive }) => cx({ active: isActive })}>
+                        <NavLink to={`/cart/${user?._id}`} className={({ isActive }) => cx({ active: isActive })}>
                           <i className={cx('bi bi-handbag', 'bag-shopping')}></i>
                           <span className={cx('notice')}>2</span>
                         </NavLink>

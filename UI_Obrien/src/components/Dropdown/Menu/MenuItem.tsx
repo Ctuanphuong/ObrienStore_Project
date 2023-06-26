@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 const cx = classNames.bind(styles)
-const MenuItem = ({ data, cartData, menuLoggedData }: any): any => {
+const MenuItem = ({ data, cartData, user }: any): any => {
   if (data) {
     return (
       <NavLink to={data?.to} className={({ isActive }) => cx('menu-item', { active: isActive })}>
@@ -35,11 +35,21 @@ const MenuItem = ({ data, cartData, menuLoggedData }: any): any => {
         </div>
       </div>
     )
-  } else if (menuLoggedData) {
+  } else {
     return (
-      <NavLink to={menuLoggedData?.to} className={({ isActive }) => cx('menu-item', { active: isActive })}>
-        {menuLoggedData?.title}
-      </NavLink>
+      <>
+        <NavLink to={'/my-account'} className={({ isActive }) => cx('menu-item', { active: isActive })}>
+          My Account
+        </NavLink>
+        <NavLink to={'/my-order'} className={({ isActive }) => cx('menu-item', { active: isActive })}>
+          My Order
+        </NavLink>
+        {user && user.role === 'admin' ? (
+          <NavLink to={'/admin'} className={({ isActive }) => cx('menu-item', { active: isActive })}>
+            Administrator Page
+          </NavLink>
+        ) : null}
+      </>
     )
   }
 }

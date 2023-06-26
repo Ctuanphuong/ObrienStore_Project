@@ -155,25 +155,34 @@ export const changePassword = async (req, res) => {
 
 // FORGET PASSWORD
 // An object that stores temporary information about the password reset code
-const passwordResetTokens = {};
-let email = "";
-export const forgotPassword = async (req, res) => {
+
+export const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
   try {
-    email = req.body.email;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: `The account does not exist with the email you entered`,
+      });
+    }
 
-    // Generate a random token and store it in passwordResetTokens
+    // Tạo mã xác thực ngẫu nhiên
     const verifyToken = crypto.randomBytes(3).toString("hex").toUpperCase();
-    passwordResetTokens[email] = verifyToken;
 
-    // Create email content
+    // Lưu mã vào db, collection User
+    user.verifyToken = verifyToken;
+    await user.save();
+
+    // Tạo nội dung của mail
     const mailOptions = {
-      from: process.env.EMAIL_SENDER,
+      from: `Obrien Store 🍏 ${process.env.EMAIL_SENDER}`,
       to: email,
-      subject: "[Obrien Store] Reset your password",
-      text: `Please use the following code to reset your password: ${verifyToken}`,
+      subject: "Reset Your Password",
+      html: `<p style="font-size: 16px; color: #002140; font-weight: 600;">You have requested to reset your password. Please enter the verification code:</p>
+      <p><strong style="font-size: 18px; color: #E98C81;">${verifyToken}</strong></p>`,
     };
 
-    // Send an email to the user's address requesting a password reset
+    // Gửi email đến địa chỉ của người dùng yêu cầu đặt lại mật khẩu
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
@@ -185,16 +194,16 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    // send mail with defined transport object
+    // Gửi mail với transporter đã được config xong
     const info = await transporter.sendMail(mailOptions);
     if (!info) {
       return res.status(400).json({
-        message: `An error occurred while sending the email!`,
+        message: "An error occurred while sending the email!",
       });
     }
 
-    return res.status(200).json({
-      message: `Password reset code has been sent to your email. Please check.`,
+    res.status(200).json({
+      message: "Password reset code has been sent to your email. Please check.",
     });
   } catch (error) {
     return res.status(500).json({
@@ -205,18 +214,28 @@ export const forgotPassword = async (req, res) => {
 
 // MIDDLEWARE VERIFY EMAIL TOKEN
 export const verifyToken = async (req, res, next) => {
+  const { email, verifyToken } = req.body;
   try {
-    const { verifyToken } = req.body;
-
-    // Get token from passwordResetTokens
-    const storedToken = passwordResetTokens[email];
-
-    // Check token exists and matches or not
-    if (!storedToken || (storedToken && storedToken !== verifyToken)) {
-      throw new Error("Invalid authentication code! Please check again.");
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "Can't find the account to verify!",
+      });
     }
 
-    req.email = email;
+    const storedToken = user.verifyToken;
+
+    // Check xem token người dùng gửi lên có khớp với token trong db không
+    if (!verifyToken || (verifyToken && verifyToken !== storedToken)) {
+      return res.status(400).json({
+        message: "Invalid verification code! Please check again.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Verification successfully! You can reset your password now!",
+    });
+
     next();
   } catch (error) {
     return res.status(500).json({
@@ -228,26 +247,28 @@ export const verifyToken = async (req, res, next) => {
 // RESET PASSWORD
 export const resetPassword = async (req, res) => {
   try {
-    const { newPassword } = req.body;
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const userPasswordUpdated = await User.findOneAndUpdate(
-      { email: req.email },
-      {
-        password: hashedPassword,
-      },
-      { new: true }
-    );
-    if (!userPasswordUpdated) {
-      return res
-        .status(404)
-        .json({ message: "Password reset failed. User does not exist!" });
+    const { email, verifyToken, password } = req.body;
+    console.log(email);
+    console.log(verifyToken);
+    const user = await User.findOne({ email, verifyToken });
+    if (!user) {
+      return res.status(400).json({
+        message: "Account not found!",
+      });
     }
 
-    // Delete token after use
-    delete passwordResetTokens[req.email];
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    return res.status(200).json({ message: "Password reset successfully!" });
+    user.password = hashedPassword;
+    await user.save();
+
+    // Sau khi đã reset mật khẩu, đặt verifyToken trong db thành rỗng
+    user.verifyToken = "";
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Password reset successfully! Please login." });
   } catch (error) {
     return res.status(500).json({
       message: error.message,

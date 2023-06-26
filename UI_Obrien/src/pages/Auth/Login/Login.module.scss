@@ -82,7 +82,7 @@
     }
   }
 
-  .forget-password {
+  .forgot-password {
     font-size: 14px;
     margin-bottom: 16px;
     transition: 0.3s;
@@ -96,5 +96,23 @@
   transition: 0.3s;
   &:hover {
     color: var(--primary-color);
+  }
+}
+
+.error-validate {
+  color: var(--primary-color);
+  font-size: 14px;
+  opacity: 0;
+  animation: fade-in 0.7s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -93,6 +93,8 @@ export const Login = async (req, res) => {
     const accessToken = generalAccessToken({
       _id: user.id,
       email,
+      name: user.name,
+      avatar: user.avatar,
       role: user.role,
     });
 
@@ -100,6 +102,8 @@ export const Login = async (req, res) => {
     const refreshToken = generalRefreshToken({
       _id: user.id,
       email,
+      name: user.name,
+      avatar: user.avatar,
       role: user.role,
     });
 

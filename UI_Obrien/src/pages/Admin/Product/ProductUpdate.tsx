@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Form, Image, Input, InputNumber, Radio, Select, Upload, UploadFile, message } from 'antd'
+import { Button, Form, Image, Input, InputNumber, Radio, Select, Upload } from 'antd'
 import styles from '../Category/Category.module.scss'
 import classNames from 'classnames/bind'
 import { useCombinedContext } from '~/providers/CombinedProvider'
@@ -122,7 +122,11 @@ const ProductUpdate = () => {
                 <Option value={category._id} key={category._id}>
                   {category.name}
                 </Option>
-              ) : null
+              ) : (
+                <Option value={category._id} key={category._id} className={cx('disabled-options')}>
+                  {category.name}
+                </Option>
+              )
             })}
           </Select>
         </Form.Item>

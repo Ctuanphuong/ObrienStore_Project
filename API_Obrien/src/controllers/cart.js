@@ -27,7 +27,7 @@ export const getCart = async (req, res) => {
 
   try {
     // Tìm kiếm giỏ hàng của người dùng
-    let cart = await Cart.findOne({ userId: userId });
+    let cart = await Cart.findOne({ userId }).populate("products.productId");
 
     // Nếu không tìm thấy giỏ hàng, trả về lỗi
     if (!cart) {
@@ -88,7 +88,7 @@ export const addToCart = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Product added to cart successfully!", cart });
+      .json({ message: "The product has been added to cart.", cart });
   } catch (error) {
     return res.status(500).json({
       message: error.message,

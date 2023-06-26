@@ -11,6 +11,7 @@ const userSchema = new Schema(
     role: { type: String, enum: ["admin", "member"], default: "member" },
     cartId: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" },
     bills: [{ billId: { type: mongoose.Schema.Types.ObjectId, ref: "Bill" } }],
+    verifyToken: { type: String, default: "" },
   },
   { timestamps: true, versionKey: false }
 );

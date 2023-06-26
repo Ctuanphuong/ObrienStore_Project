@@ -7,11 +7,14 @@ export const registerSchema = Joi.object({
     "string.max": "Name cannot exceed {#limit} characters.",
     "any.required": 'The "name" field is required!',
   }),
-  email: Joi.string().email().required().messages({
-    "string.email": "Invalid email!",
-    "string.empty": 'The "email" field cannot be empty!',
-    "any.required": 'The "email" field is required!',
-  }),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      "string.email": "Invalid email!",
+      "string.empty": 'The "email" field cannot be empty!',
+      "any.required": 'The "email" field is required!',
+    }),
   phone: Joi.string()
     .trim()
     .pattern(/^[0-9]{10,11}$/)

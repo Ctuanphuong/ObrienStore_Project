@@ -146,8 +146,9 @@
   padding: 0px 20px 7px;
 
   span {
-    font-family: var(--font-Oswald);
+    font-family: var(--font-Poppins);
     font-size: 13px;
+    font-weight: 600;
   }
 
   .handwave {
@@ -156,5 +157,13 @@
 
   .greet {
     font-family: var(--font-Poppins);
+  }
+}
+
+.ok-btn-delete {
+  background-color: var(--primary-color);
+  transition: 0.3s ease-in-out;
+  &:hover {
+    background-color: var(--primary-color) !important;
   }
 }

@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import dotenv from "dotenv";
 import { generalVerifyToken } from "../services/jwtService.js";
+import jwt from "jsonwebtoken";
 dotenv.config();
 const authenticate = async (req, res, next) => {
   try {
@@ -12,12 +12,21 @@ const authenticate = async (req, res, next) => {
 
     const accessToken = authHeader && authHeader.split(" ")[1];
 
-    const { payload } = generalVerifyToken({
-      accessToken,
-      privateKey: process.env.JWT_PRIVATE,
-    });
+    let payload = "";
+    try {
+      payload = generalVerifyToken({
+        accessToken,
+        privateKey: process.env.JWT_PRIVATE,
+      });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Error("Token has expired! Please login again.");
+      } else {
+        throw new Error("Invalid JWT token.");
+      }
+    }
 
-    const { _id } = payload;
+    const { _id } = payload.payload;
     //get User
     const user = await User.findById(_id);
     if (!user) {

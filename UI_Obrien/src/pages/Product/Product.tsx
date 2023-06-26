@@ -2,15 +2,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './Product.module.scss'
 import classNames from 'classnames/bind'
 import BreadCrumbs from '~/components/BreadCrumbs/BreadCrumbs'
-import { faCartShopping, faSearch, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faCartShopping, faDollar, faSearch, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faEye, faStar as faStarRegular, faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import { categories } from '~/data/categories'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { IProduct } from '~/interfaces/IProduct'
+import { useCombinedContext } from '~/providers/CombinedProvider'
+import getDecodedUser from '~/components/Auth/getDecodedUser'
 
 const cx = classNames.bind(styles)
 
 const Product = () => {
+  const { cartProvider } = useCombinedContext()
+
+  // lấy thông tin user khi đã đăng nhập bằng cách gọi hàm getDecodedUser()
+  const user = getDecodedUser()
+
+  // phần chuyển đổi giao diện hiển thị sản phẩm theo dạng list hoặc grid
   const [grid, setGrid] = useState(true)
   const [list, setList] = useState(false)
 
@@ -23,6 +32,15 @@ const Product = () => {
     setList(true)
     setGrid(false)
   }
+
+  // end phần chuyển đổi giao diện
+  const { productCrud } = useCombinedContext()
+  const [products, setProducts] = useState<IProduct[]>([])
+  useEffect(() => {
+    setProducts(productCrud.products)
+  }, [productCrud.products])
+
+  const recentProducts = products.slice(0, 3)
 
   return (
     <>
@@ -90,68 +108,34 @@ const Product = () => {
                   {/* one col  */}
                   <div className={cx('widget-list')}>
                     <h3 className={cx('widget-title')}>Recent Products</h3>
-                    <div className={cx('sidebar-product')}>
-                      <Link to='/product' className={cx('img-recent_product')}>
-                        <img src='./src/assets/images/product/product-1.jpg' alt="Obrien's product" />
-                      </Link>
-                      <div className={cx('content-recent-product')}>
-                        <h4 className={cx('name-recent-product')}>
-                          <Link to={'/product'}>Fresh Coconut</Link>
-                        </h4>
-                        <p className={cx('price-recent-product')}>
-                          $80.00 <del>$90.00</del>
-                        </p>
-                        <div className={cx('product-recent-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
+
+                    {recentProducts.map((product) => (
+                      <div className={cx('sidebar-product')} key={product._id}>
+                        <Link to={`/product/${product._id}`} className={cx('img-recent_product')}>
+                          <img src={product.images[0].url} alt="Obrien's product" />
+                        </Link>
+                        <div className={cx('content-recent-product')}>
+                          <h4 className={cx('name-recent-product')}>
+                            <Link to={`/product/${product._id}`}>{product.name}</Link>
+                          </h4>
+                          <p className={cx('price-recent-product')}>
+                            <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                            {product.price}
+                            <del>
+                              <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                              {product.price}
+                            </del>
+                          </p>
+                          <div className={cx('product-recent-rating')}>
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStarRegular} />
+                            <FontAwesomeIcon icon={faStarRegular} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className={cx('sidebar-product')}>
-                      <Link to='/product' className={cx('img-recent_product')}>
-                        <img src='./src/assets/images/product/product-1.jpg' alt="Obrien's product" />
-                      </Link>
-                      <div className={cx('content-recent-product')}>
-                        <h4 className={cx('name-recent-product')}>
-                          {' '}
-                          <Link to={'/product'}>Fresh Coconut</Link>
-                        </h4>
-                        <p className={cx('price-recent-product')}>
-                          $80.00 <del>$90.00</del>
-                        </p>
-                        <div className={cx('product-recent-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className={cx('sidebar-product')}>
-                      <Link to='/product' className={cx('img-recent_product')}>
-                        <img src='./src/assets/images/product/product-1.jpg' alt="Obrien's product" />
-                      </Link>
-                      <div className={cx('content-recent-product')}>
-                        <h4 className={cx('name-recent-product')}>
-                          {' '}
-                          <Link to={'/product'}>Fresh Coconut</Link>
-                        </h4>
-                        <p className={cx('price-recent-product')}>
-                          $80.00 <del>$90.00</del>
-                        </p>
-                        <div className={cx('product-recent-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                   {/* one col  */}
                 </div>
@@ -192,409 +176,65 @@ const Product = () => {
               <div className={cx('product-grid-wrapper', { 'grid-block': grid, 'grid-none': !grid })}>
                 <div className={cx('product-wrapper')}>
                   {/* one product */}
-
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product/:id'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847064/Obrien%20Store/product/product-14_pbi7jo.png '
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
+                  {products.map((product) => (
+                    <div className={cx('wrap-col-product')} key={product._id}>
+                      <div className={cx('col-product')}>
+                        <div className={cx('product-image')}>
+                          <Link to={`/product/${product._id}`}>
+                            <img src={product.images[0].url} alt="Obrien's product" />
+                          </Link>
+                        </div>
+                        {/* <div className={cx('label-product')}>
                     <span>Soldout</span>
                   </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Fresh Plums</Link>
-                          </h3>
+                        <div className={cx('product-context')}>
+                          <div className={cx('product-rating')}>
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStar} />
+                            <FontAwesomeIcon icon={faStarRegular} />
+                            <FontAwesomeIcon icon={faStarRegular} />
+                          </div>
+                          <div className={cx('product-name')}>
+                            <h3>
+                              <Link to={`/product/${product._id}`}>{product.name}</Link>
+                            </h3>
 
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
+                            <button>
+                              <FontAwesomeIcon icon={faThumbsUp} />
+                            </button>
+                          </div>
+                          <div className={cx('product-price')}>
+                            <span className={cx('regular-price')}>
+                              <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                              {product.price}
+                            </span>
+                            <span className={cx('old-price')}>
+                              <del>
+                                <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                                {product.price}
+                              </del>
+                            </span>
+                          </div>
+                        </div>
+                        <div className={cx('add-to-cart')}>
+                          <button
+                            className={cx('btn-add')}
+                            onClick={() =>
+                              cartProvider.onAddToCart({
+                                userId: user._id,
+                                productId: product._id,
+                                quantity: 1
+                              })
+                            }
+                          >
+                            Add to cart
                           </button>
                         </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
                       </div>
                     </div>
-                  </div>
-                  {/* end one product */}
+                  ))}
 
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847065/Obrien%20Store/product/product-12_mgoaak.png'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Fresh Litchi</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847066/Obrien%20Store/product/product-13_oltc0p.png'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      <div className={cx('label-product')}>
-                        <span>Soldout</span>
-                      </div>
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>custard apple</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-11_ibyufb.webp'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Fresh Pineapple</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847064/Obrien%20Store/product/product-10_zzc5w7.png'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Fresh Apple</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-9_bq7mzo.webp'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>vegetables cabbage</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847062/Obrien%20Store/product/product-8_iwnzro.webp'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Spicy chili pepper</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-7_p4hopy.webp'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Fresh papaya</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* end one product */}
-
-                  {/* one product */}
-                  <div className={cx('wrap-col-product')}>
-                    <div className={cx('col-product')}>
-                      <div className={cx('product-image')}>
-                        <Link to={'/product'}>
-                          <img
-                            src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847062/Obrien%20Store/product/product-6_n25qgp.webp'
-                            alt="Obrien's product"
-                          />
-                        </Link>
-                      </div>
-                      {/* <div className={cx('label-product')}>
-                    <span>Soldout</span>
-                  </div> */}
-                      <div className={cx('product-context')}>
-                        <div className={cx('product-rating')}>
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStar} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                          <FontAwesomeIcon icon={faStarRegular} />
-                        </div>
-                        <div className={cx('product-name')}>
-                          <h3>
-                            <Link to={'/product'}>Ginger</Link>
-                          </h3>
-
-                          <button>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                          </button>
-                        </div>
-                        <div className={cx('product-price')}>
-                          <span className={cx('regular-price')}>$80.00</span>
-                          <span className={cx('old-price')}>
-                            <del>$90.00</del>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={cx('add-to-cart')}>
-                        <button className={cx('btn-add')}>Add to cart</button>
-                      </div>
-                    </div>
-                  </div>
                   {/* end one product */}
                 </div>
               </div>
@@ -603,135 +243,51 @@ const Product = () => {
               {/* Product list wrapper */}
               <div className={cx('product-list-wrapper', { 'list-block': list, 'list-none': !list })}>
                 {/* one col */}
-                <div className={cx('row-product-list')}>
-                  <div className={cx('product-list-img')}>
-                    <Link to='/product' className={cx('wrap-img-list')}>
-                      <img src='./src/assets/images/product/product-11.jpg' alt="Obrien's product" />
-                    </Link>
-                  </div>
-                  <div className={cx('product-list-content')}>
-                    <div className={cx('product-list-rating')}>
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                    </div>
-                    <div className={cx('product-list-title')}>
-                      <h4>
-                        <Link to={'/product'}>Fresh Pineapple</Link>
-                      </h4>
-                    </div>
-                    <div className={cx('product-list-price-box')}>
-                      <span className={cx('product-list-price')}>$80.00</span>
-                      <del className={cx('product-list-old-price')}>$90.00</del>
-                    </div>
-                    <div className={cx('product-list-actions')}>
-                      <button>
-                        <FontAwesomeIcon icon={faCartShopping} />
-                      </button>
-                      <button>
-                        <FontAwesomeIcon icon={faThumbsUp} />
-                      </button>
-                      <Link to={'/product'} className={cx('product-list-detail')}>
-                        <FontAwesomeIcon icon={faEye} />
+                {products.map((product) => (
+                  <div className={cx('row-product-list')} key={product._id}>
+                    <div className={cx('product-list-img')}>
+                      <Link to={`/product/${product._id}`} className={cx('wrap-img-list')}>
+                        <img src={product.images[0].url} alt="Obrien's product" />
                       </Link>
                     </div>
-                    <p className={cx('list-product-content')}>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-                      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-                      professor at Hampden-Sydney College in Virginia,
-                    </p>
+                    <div className={cx('product-list-content')}>
+                      <div className={cx('product-list-rating')}>
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStar} />
+                        <FontAwesomeIcon icon={faStarRegular} />
+                        <FontAwesomeIcon icon={faStarRegular} />
+                      </div>
+                      <div className={cx('product-list-title')}>
+                        <h4>
+                          <Link to={`/product/${product._id}`}>{product.name}</Link>
+                        </h4>
+                      </div>
+                      <div className={cx('product-list-price-box')}>
+                        <span className={cx('product-list-price')}>
+                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                          {product.price}
+                        </span>
+                        <del className={cx('product-list-old-price')}>
+                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-old-price')} />
+                          {product.price}
+                        </del>
+                      </div>
+                      <div className={cx('product-list-actions')}>
+                        <button>
+                          <FontAwesomeIcon icon={faCartShopping} />
+                        </button>
+                        <button>
+                          <FontAwesomeIcon icon={faThumbsUp} />
+                        </button>
+                        <Link to={'/product'} className={cx('product-list-detail')}>
+                          <FontAwesomeIcon icon={faEye} />
+                        </Link>
+                      </div>
+                      <p className={cx('list-product-content')}>{product.description}</p>
+                    </div>
                   </div>
-                </div>
-                {/* one col */}
-
-                {/* one col */}
-                <div className={cx('row-product-list')}>
-                  <div className={cx('product-list-img')}>
-                    <Link to='/product' className={cx('wrap-img-list')}>
-                      <img src='./src/assets/images/product/product-13.jpg' alt="Obrien's product" />
-                    </Link>
-                  </div>
-                  <div className={cx('product-list-content')}>
-                    <div className={cx('product-list-rating')}>
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                    </div>
-                    <div className={cx('product-list-title')}>
-                      <h4>
-                        <Link to={'/product'}>custard apple</Link>
-                      </h4>
-                    </div>
-                    <div className={cx('product-list-price-box')}>
-                      <span className={cx('product-list-price')}>$80.00</span>
-                      <del className={cx('product-list-old-price')}>$90.00</del>
-                    </div>
-                    <div className={cx('product-list-actions')}>
-                      <button>
-                        <FontAwesomeIcon icon={faCartShopping} />
-                      </button>
-                      <button>
-                        <FontAwesomeIcon icon={faThumbsUp} />
-                      </button>
-                      <Link to={'/product'} className={cx('product-list-detail')}>
-                        <FontAwesomeIcon icon={faEye} />
-                      </Link>
-                    </div>
-                    <p className={cx('list-product-content')}>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-                      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-                      professor at Hampden-Sydney College in Virginia,
-                    </p>
-                  </div>
-                </div>
-                {/* one col */}
-
-                {/* one col */}
-                <div className={cx('row-product-list')}>
-                  <div className={cx('product-list-img')}>
-                    <Link to='/product' className={cx('wrap-img-list')}>
-                      <img src='./src/assets/images/product/product-14.png' alt="Obrien's product" />
-                    </Link>
-                  </div>
-                  <div className={cx('product-list-content')}>
-                    <div className={cx('product-list-rating')}>
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStar} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                      <FontAwesomeIcon icon={faStarRegular} />
-                    </div>
-                    <div className={cx('product-list-title')}>
-                      <h4>
-                        <Link to={'/product'}>Fresh plums</Link>
-                      </h4>
-                    </div>
-                    <div className={cx('product-list-price-box')}>
-                      <span className={cx('product-list-price')}>$80.00</span>
-                      <del className={cx('product-list-old-price')}>$90.00</del>
-                    </div>
-                    <div className={cx('product-list-actions')}>
-                      <button>
-                        <FontAwesomeIcon icon={faCartShopping} />
-                      </button>
-                      <button>
-                        <FontAwesomeIcon icon={faThumbsUp} />
-                      </button>
-                      <Link to={'/product'} className={cx('product-list-detail')}>
-                        <FontAwesomeIcon icon={faEye} />
-                      </Link>
-                    </div>
-                    <p className={cx('list-product-content')}>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
-                      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin
-                      professor at Hampden-Sydney College in Virginia,
-                    </p>
-                  </div>
-                </div>
+                ))}
                 {/* one col */}
               </div>
               {/* Product list wrapper */}
@@ -755,7 +311,7 @@ const Product = () => {
                       </li>
                     </ul>
                   </nav>
-                  <p>Showing 1 - 9 of 34 products</p>
+                  <p>Showing 1 - 9 of {products.length} products</p>
                 </div>
               </div>
               {/* Bottom toolbar wrapper */}

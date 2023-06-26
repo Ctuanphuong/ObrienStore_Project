@@ -6,9 +6,11 @@ import DropdownWrapper from '../Dropdown'
 import Button from '~/components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { useCombinedContext } from '~/providers/CombinedProvider'
 const cx = classNames.bind(styles)
 
-const Menu = ({ items, cartItems, menuloggedItems, offset = [0, 29], children }: any) => {
+const Menu = ({ items, cartItems, offset = [0, 29], user = '', children }: any) => {
+  const { authProvider } = useCombinedContext()
   const renderItem = () => {
     if (items) {
       return items.map((item: object, index: number) => {
@@ -34,19 +36,21 @@ const Menu = ({ items, cartItems, menuloggedItems, offset = [0, 29], children }:
           </div>
         </div>
       )
-    } else if (menuloggedItems) {
+    } else if (user) {
       return (
         <>
           <div className={cx('hello')}>
-            <span className={cx('greet')}>Welcome,</span> <span>Chu Tuan Phuong</span>{' '}
+            <span className={cx('greet')}>Welcome,</span> <span>{user.name}</span>
             <span className={cx('handwave')}>👋🏻</span>
           </div>
-          {menuloggedItems.map((menu: object, index: number) => {
-            return <MenuItem key={index} menuLoggedData={menu}></MenuItem>
-          })}
+          <MenuItem user={user} />
           <div className={cx('logout-area')}>
             <div className={cx('wrap-btn-logout')}>
-              <button>
+              <button
+                onClick={() => {
+                  authProvider.onLogout()
+                }}
+              >
                 Logout <FontAwesomeIcon icon={faRightFromBracket} className={cx('logout-icon')} />
               </button>
             </div>

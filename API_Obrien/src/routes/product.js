@@ -12,8 +12,8 @@ const router = Router();
 
 router.get("/products", getProducts);
 router.get("/products/:id", getProduct);
-router.post("/products", addProduct);
-router.put("/products/:id", updateProduct);
-router.delete("/products/:id", deleteProduct);
+router.post("/products", authenticate, authorization, addProduct);
+router.put("/products/:id", authenticate, authorization, updateProduct);
+router.delete("/products/:id", authenticate, authorization, deleteProduct);
 
 export default router;

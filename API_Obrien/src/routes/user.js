@@ -17,6 +17,7 @@ router.put("/user/update/:id", updateUserProfile);
 router.delete("/user/delete/:id", authenticate, authorization, deleteUser);
 router.post("/user/change-password", changePassword);
 router.post("/user/forgot-password", forgotPassword);
-router.post("/user/reset-password", verifyToken, resetPassword);
+router.post("/user/verify-email", verifyToken);
+router.post("/user/reset-password", resetPassword);
 
 export default router;

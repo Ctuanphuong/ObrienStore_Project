@@ -1,45 +1,75 @@
 import BreadCrumbs from '~/components/BreadCrumbs'
 import styles from './Cart.module.scss'
-import axios from 'axios'
-
 import classNames from 'classnames/bind'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faDollar, faMinus, faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import Button from '~/components/Button/Button'
 import { useEffect, useState } from 'react'
+import { useCombinedContext } from '~/providers/CombinedProvider'
+import { ICart, IProductCart } from '~/interfaces/ICart'
 const cx = classNames.bind(styles)
 const Cart = () => {
-  //updateCart
-  const updateCart = async (userId: any, productId: any, quantity: any) => {
-    try {
-      const res = await axios.put('http://localhost:8000/api/cart/update', {
-        userId: userId,
-        productId: productId,
-        quantity: quantity
-      })
-      console.log(res)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const { userId } = useParams()
+  const { cartProvider } = useCombinedContext()
+  const [cart, setCart] = useState<ICart>()
+  const [products, setProducts] = useState<IProductCart[]>([])
 
-  const [quantity, setQuantity] = useState(1)
+  // Gọi hàm getCart() rồi truyền userId vào để lấy về thông tin cart của user đang đăng nhập
+  // Cho vào useEffect và điều kiện chạy làm hàm getCart là userId thay đổi để cho api ko bị call vô hạn
+  useEffect(() => {
+    cartProvider.getUserId(userId)
+  }, [userId])
 
-  useEffect(() => {}, [])
+  // gọi cartProvider để lấy data cart
+  useEffect(() => {
+    setCart(cartProvider.cart)
+  }, [cartProvider.cart])
 
-  const onHandleDecrease = () => {
+  // Gọi cartProvider để lấy danh sách sản phẩm trong giỏ hàng của userId
+  useEffect(() => {
+    setProducts(cartProvider.products)
+  }, [cartProvider.products])
+
+  // Cập nhật số lượng sản phẩm trong giỏ hàng
+  const onHandleDecrease = (quantity: number, productId: string) => {
     if (quantity > 1) {
       const newQuantity = quantity - 1
-      setQuantity(newQuantity)
-      updateCart('648f4b97fb0d9cd53dde08ff', '648b317b52b8d62dcec27c82', newQuantity)
+      const updatedProducts = products.map((product) => {
+        if (product.productId._id === productId) {
+          return { ...product, quantity: newQuantity }
+        }
+        return product
+      })
+      cartProvider.onUpdateCart({ userId, productId, quantity: newQuantity })
+      setProducts(updatedProducts)
     }
   }
 
-  const onHandleIncrease = () => {
+  const onHandleIncrease = (quantity: number, productId: string) => {
     const newQuantity = quantity + 1
-    setQuantity(newQuantity)
-    updateCart('648f4b97fb0d9cd53dde08ff', '648b317b52b8d62dcec27c82', newQuantity)
+    const updatedProducts = products.map((product) => {
+      if (product.productId._id === productId) {
+        return { ...product, quantity: newQuantity }
+      }
+      return product
+    })
+    cartProvider.onUpdateCart({ userId, productId, quantity: newQuantity })
+    setProducts(updatedProducts)
+  }
+
+  // Xử lý thay đổi số lượng khi người dùng  nhập số lượng bằng tay
+  const onHandleChangeQuantity = (productId: string, quantity: number) => {
+    if (!isNaN(quantity)) {
+      const updatedProducts = products.map((product) => {
+        if (product.productId._id === productId) {
+          return { ...product, quantity }
+        }
+        return product
+      })
+      setProducts(updatedProducts)
+      cartProvider.onUpdateCart({ userId, productId, quantity })
+    }
   }
 
   return (
@@ -64,129 +94,66 @@ const Cart = () => {
                 </thead>
 
                 <tbody>
-                  <tr>
-                    <td className={cx('pro-thumbnail')}>
-                      <Link to='/product'>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847065/Obrien%20Store/product/product-12_mgoaak.png'
-                          alt="Obrien's product image"
-                          className={cx('img-fluid')}
-                        />
-                      </Link>
-                    </td>
-                    <td className={cx('pro-product')}>
-                      <Link to='/product'>Fresh Litchi</Link>
-                    </td>
-                    <td className={cx('pro-price')}>
-                      <span>$80.00</span>
-                    </td>
+                  {products.map((product) => (
+                    <tr key={product._id}>
+                      <td className={cx('pro-thumbnail')}>
+                        <Link to={`/product/${product.productId._id}`}>
+                          <img
+                            src={product.productId.images[0].url}
+                            alt="Obrien's product image"
+                            className={cx('img-fluid')}
+                          />
+                        </Link>
+                      </td>
+                      <td className={cx('pro-product')}>
+                        <Link to={`/product/${product.productId._id}`}>{product.productId.name}</Link>
+                      </td>
+                      <td className={cx('pro-price')}>
+                        <span>
+                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                          {product.productId.price}
+                        </span>
+                      </td>
 
-                    <td className={cx('pro-quantity')}>
-                      <div className={cx('quantity')}>
-                        <div className={cx('cart-mini')}>
-                          <input type='text' value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value))} />
-                          <button className={cx('btn-desc')} onClick={onHandleDecrease}>
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                          <button className={cx('btn-plus')} onClick={onHandleIncrease}>
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
+                      <td className={cx('pro-quantity')}>
+                        <div className={cx('quantity')}>
+                          <div className={cx('cart-mini')}>
+                            <input
+                              type='text'
+                              value={product.quantity}
+                              name='quantity'
+                              onChange={(e) => onHandleChangeQuantity(product.productId._id, Number(e.target.value))}
+                            />
+                            <button
+                              className={cx('btn-desc')}
+                              onClick={() => onHandleDecrease(product.quantity, product.productId._id)}
+                            >
+                              <FontAwesomeIcon icon={faMinus} />
+                            </button>
+                            <button
+                              className={cx('btn-plus')}
+                              onClick={() => onHandleIncrease(product.quantity, product.productId._id)}
+                            >
+                              <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className={cx('pro-total')}>
-                      <span>$80.00</span>
-                    </td>
+                      <td className={cx('pro-total')}>
+                        <span>
+                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                          {product.price}
+                        </span>
+                      </td>
 
-                    <td className={cx('pro-remove')}>
-                      <button>
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={cx('pro-thumbnail')}>
-                      <Link to='/product'>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-11_ibyufb.webp'
-                          alt="Obrien's product image"
-                          className={cx('img-fluid')}
-                        />
-                      </Link>
-                    </td>
-                    <td className={cx('pro-product')}>
-                      <Link to='/product'>Fresh Pineapple</Link>
-                    </td>
-                    <td className={cx('pro-price')}>
-                      <span>$80.00</span>
-                    </td>
-
-                    <td className={cx('pro-quantity')}>
-                      <div className={cx('quantity')}>
-                        <div className={cx('cart-mini')}>
-                          <input type='text' defaultValue={1} />
-                          <button className={cx('btn-desc')}>
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                          <button className={cx('btn-plus')}>
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className={cx('pro-total')}>
-                      <span>$80.00</span>
-                    </td>
-
-                    <td className={cx('pro-remove')}>
-                      <button>
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={cx('pro-thumbnail')}>
-                      <Link to='/product'>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847064/Obrien%20Store/product/product-14_pbi7jo.png'
-                          alt="Obrien's product image"
-                          className={cx('img-fluid')}
-                        />
-                      </Link>
-                    </td>
-                    <td className={cx('pro-product')}>
-                      <Link to='/product'>Fresh Plums</Link>
-                    </td>
-                    <td className={cx('pro-price')}>
-                      <span>$80.00</span>
-                    </td>
-
-                    <td className={cx('pro-quantity')}>
-                      <div className={cx('quantity')}>
-                        <div className={cx('cart-mini')}>
-                          <input type='text' defaultValue={1} />
-                          <button className={cx('btn-desc')}>
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                          <button className={cx('btn-plus')}>
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className={cx('pro-total')}>
-                      <span>$80.00</span>
-                    </td>
-
-                    <td className={cx('pro-remove')}>
-                      <button>
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </button>
-                    </td>
-                  </tr>
+                      <td className={cx('pro-remove')}>
+                        <button>
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -200,9 +167,9 @@ const Cart = () => {
                   <Button primary>Apply Coupon</Button>
                 </form>
               </div>
-              <div className={cx('update-cart')}>
+              {/* <div className={cx('update-cart')}>
                 <Button primary>Update Cart</Button>
-              </div>
+              </div> */}
             </div>
             {/* cart update options */}
           </div>
@@ -217,15 +184,30 @@ const Cart = () => {
                   <tbody>
                     <tr>
                       <td>Sub Total</td>
-                      <td>$230</td>
+                      <td>
+                        <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                        {cart?.totalPrice}
+                      </td>
                     </tr>
                     <tr>
                       <td>Shipping</td>
-                      <td>$70</td>
+                      <td>
+                        <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                        {cart?.shippingFee}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Discount</td>
+                      <td>
+                        <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />0
+                      </td>
                     </tr>
                     <tr className={cx('total')}>
                       <td>Total</td>
-                      <td className={cx('total-amount')}>$300</td>
+                      <td className={cx('total-amount')}>
+                        <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                        {cart?.totalOrder}
+                      </td>
                     </tr>
                   </tbody>
                 </table>

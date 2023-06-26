@@ -3,9 +3,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ICategory } from '~/interfaces/ICategory'
 import { addCategory, deleteCategory, getCategories, updateCategory } from '~/services/api/category'
-import styles from '../pages/Admin/Product/Product.module.scss'
-import classNames from 'classnames/bind'
-const cx = classNames.bind(styles)
 
 const CategoryCrud = () => {
   const navigate = useNavigate()

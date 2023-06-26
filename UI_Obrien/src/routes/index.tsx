@@ -8,8 +8,10 @@ import Register from '~/pages/Auth/Register'
 import Cart from '~/pages/Cart'
 import CheckOut from '~/pages/Cart/CheckOut'
 import Home from '~/pages/Home'
+import PageNotAuth from '~/pages/PageNotAuth'
 import Product from '~/pages/Product'
 import ProductDetail from '~/pages/ProductDetail'
+import { ForgotPassword } from '~/pages/User/Password'
 export const publicRoutes = [
   {
     path: '/',
@@ -27,10 +29,16 @@ export const publicRoutes = [
     path: '/product/:id',
     component: ProductDetail
   },
-  { path: '/cart', component: Cart },
+  { path: '/cart/:userId', component: Cart },
   { path: '/checkout', component: CheckOut },
+
+  // Auth router
   { path: '/login', component: Login },
   { path: '/register', component: Register }
+
+  // End Auth router
+
+  // user router
 ]
 export const privateRoutes = [
   {
@@ -42,7 +50,7 @@ export const privateRoutes = [
     component: DashBoard
   },
 
-  // Product path
+  // Product router
   {
     path: '/admin/products',
     component: ProductList
@@ -55,9 +63,9 @@ export const privateRoutes = [
     path: '/admin/products/update/:id',
     component: ProductUpdate
   },
-  // End Product path
+  // End Product router
 
-  // Category path
+  // Category router
   {
     path: '/admin/categories',
     component: CategoryList
@@ -70,5 +78,5 @@ export const privateRoutes = [
     path: '/admin/categories/update/:id',
     component: CategoryUpdate
   }
-  // End Category path
+  // End Category router
 ]

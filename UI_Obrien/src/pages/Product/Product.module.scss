@@ -146,6 +146,7 @@
 .content-recent-product .price-recent-product {
   font-size: 14px;
   display: block;
+  font-weight: 600;
 
   del {
     color: #a8a8a8;
@@ -562,7 +563,7 @@ svg {
   .product-list-price {
     color: var(--black-color);
     font-weight: 600;
-    margin-right: 5px;
+    margin-right: 10px;
   }
 
   .product-list-old-price {
@@ -647,4 +648,14 @@ svg {
 
 .col-bottom-toolbar p {
   margin: 0;
+}
+
+.dollar-icon {
+  font-size: 15px;
+  margin-right: 2px;
+}
+
+.dollar-icon-old-price {
+  font-size: 12px;
+  margin-right: 2px;
 }
