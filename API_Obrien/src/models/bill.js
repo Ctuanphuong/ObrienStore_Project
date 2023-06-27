@@ -4,8 +4,9 @@ const billSchema = new Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     cartId: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" },
-    shippingFee: Number,
     shippingAddress: String,
+    shippingFee: Number,
+    totalPrice: Number,
     totalOrder: Number,
     paymentMethod: String,
     orderNotes: String,

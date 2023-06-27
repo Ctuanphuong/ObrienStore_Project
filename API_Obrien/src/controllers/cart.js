@@ -141,6 +141,7 @@ export const updateCart = async (req, res) => {
 // DELETE ONE PRODUCT IN CART
 export const deleteProductCart = async (req, res) => {
   const { userId, productId } = req.body;
+
   try {
     // Tìm kiếm giỏ hàng của người dùng
     let cart = await Cart.findOne({ userId: userId });
@@ -160,9 +161,7 @@ export const deleteProductCart = async (req, res) => {
     // Tính tổng giá của giỏ hàng
     handleTotalOrder(cart);
 
-    res
-      .status(200)
-      .json({ message: "Product removed from cart successfully!" });
+    res.status(200).json({ message: "Product deleted successfully!" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -186,7 +185,7 @@ export const deleteAllProductCart = async (req, res) => {
     await cart.save();
 
     return res.status(200).json({
-      message: "All products removed from cart successfully!",
+      message: "Delete all products in cart successfully!",
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -196,16 +195,24 @@ export const deleteAllProductCart = async (req, res) => {
 // CHECKOUT
 export const checkOut = async (req, res) => {
   const { userId, shippingAdress, paymentMethod, orderNotes } = req.body;
-
+  let cartProductInfo = {};
   try {
     // Tìm kiếm giỏ hàng của người dùng
-    const cart = await Cart.findOne({ userId: userId });
+    const cart = await Cart.findOne({ userId: userId }).populate(
+      "products.productId"
+    );
+
     // Nếu không tìm thấy giỏ hàng, trả về lỗi
     if (!cart || cart.products.length === 0) {
       return res
         .status(400)
         .json({ message: "Cart not found or cart has no products!" });
     }
+
+    // Lưu thông tin sản phẩm trong giỏ hàng vào biến cartInfo
+    cartProductInfo = {
+      products: [...cart.products],
+    };
 
     // Lấy thông tin user
     const user = await User.findById(userId);
@@ -214,12 +221,16 @@ export const checkOut = async (req, res) => {
     const bill = await Bill.create({
       userId: userId,
       cartId: cart._id,
+      totalPrice: cart.totalPrice,
       shippingFee: cart.shippingFee,
-      shippingAdress: user?.address || shippingAdress,
+      shippingAdress: user.address || shippingAdress,
       totalOrder: cart.totalOrder,
       paymentMethod: paymentMethod,
       orderNotes: orderNotes,
     });
+
+    // Populate thông tin từ bảng User và Cart
+    await bill.populate("userId");
 
     // Sau khi đã tạo bill, cập nhật trạng thái giỏ hàng và xóa giỏ hàng
     cart.totalPrice = 0;
@@ -236,7 +247,7 @@ export const checkOut = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Order placed successfully!", bill });
+      .json({ message: "Order placed successfully!", bill, cartProductInfo });
   } catch (error) {
     return res.status(500).json({
       message: error.message,

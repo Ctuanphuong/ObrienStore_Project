@@ -500,3 +500,40 @@
   font-size: 15px;
   margin-right: 2px;
 }
+
+.not-logged-in {
+  margin-top: 75px;
+  text-align: center;
+  h3 {
+    font-size: 32px;
+  }
+}
+
+.remove-all-product {
+  button {
+    font-size: 14px !important;
+    font-family: var(--font-Poppins);
+    font-weight: 600;
+    padding: 10px 20px;
+    background-color: #1b1b1c;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    display: inline-block;
+    line-height: 18px;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: var(--primary-color);
+      cursor: pointer;
+    }
+  }
+}
+
+.ok-btn-delete {
+  background-color: #ee3636;
+  transition: 0.3s ease-in-out;
+  &:hover {
+    background-color: #e71b1b !important;
+  }
+}

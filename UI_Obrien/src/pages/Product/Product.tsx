@@ -222,7 +222,7 @@ const Product = () => {
                             className={cx('btn-add')}
                             onClick={() =>
                               cartProvider.onAddToCart({
-                                userId: user._id,
+                                userId: user?._id,
                                 productId: product._id,
                                 quantity: 1
                               })

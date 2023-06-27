@@ -1,4 +1,4 @@
-import { IAddToCart } from '~/interfaces/ICart'
+import { IAddToCart, ICheckOut, IDeleteCart, IDeleteOneProductCart } from '~/interfaces/ICart'
 import instance from './instance'
 
 export const addToCart = (data: IAddToCart) => {
@@ -11,4 +11,16 @@ export const getCartUser = (userId: string) => {
 
 export const updateCart = (dataCart: IAddToCart) => {
   return instance.put(`/cart/update`, dataCart)
+}
+
+export const deleteOneProduct = (dataCart: IDeleteOneProductCart) => {
+  return instance.post(`/cart/delete`, dataCart)
+}
+
+export const deleteAllProduct = (dataCart: IDeleteCart) => {
+  return instance.post(`/cart/delete-all`, dataCart)
+}
+
+export const checkOut = (dataCart: ICheckOut) => {
+  return instance.post('/cart/checkout', dataCart)
 }

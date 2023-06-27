@@ -24,3 +24,18 @@ export interface IProductCart {
   quantity: number
   _id: string
 }
+
+export interface ICheckOut {
+  userId: string
+  shippingAdress: string
+  paymentMethod: string
+  orderNotes: string
+}
+
+export interface IDeleteCart {
+  userId: string
+}
+
+export interface IDeleteOneProductCart extends IDeleteCart {
+  productId: string
+}

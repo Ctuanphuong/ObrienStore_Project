@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import BreadCrumbs from '~/components/BreadCrumbs'
 import styles from './Cart.module.scss'
 import classNames from 'classnames/bind'
 import Button from '~/components/Button/Button'
+import { useCombinedContext } from '~/providers/CombinedProvider'
 
 const cx = classNames.bind(styles)
 
 const CheckOut = () => {
+  const { cartProvider } = useCombinedContext()
+
+  console.log(cartProvider.onCheckOut)
+
   const [showCoupon, setShowCoupon] = useState(false)
 
   const handleShowCoupon = () => {
