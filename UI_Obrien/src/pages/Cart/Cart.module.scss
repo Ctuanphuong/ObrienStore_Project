@@ -135,7 +135,6 @@
     background-color: transparent;
     border-left: 1px solid #e1e1e1;
     transition: 0.3s;
-    z-index: 1000;
     cursor: pointer;
 
     &:hover {
@@ -413,6 +412,7 @@
 
     td {
       padding: 8px;
+      font-weight: 400;
     }
     .text-center {
       text-align: center;
@@ -496,6 +496,11 @@
   color: var(--primary-color);
 }
 
+.option-payment .disable-method {
+  pointer-events: none;
+  opacity: 20%;
+  user-select: none;
+}
 .dollar-icon {
   font-size: 15px;
   margin-right: 2px;
@@ -535,5 +540,34 @@
   transition: 0.3s ease-in-out;
   &:hover {
     background-color: #e71b1b !important;
+  }
+}
+
+.dollar-icon-regular {
+  font-size: 14px;
+  color: #494848;
+  margin-right: 2px;
+}
+
+.dollar-icon-larger {
+  font-size: 18px;
+  margin-right: 3px;
+}
+
+.error-validate {
+  color: var(--primary-color);
+  font-size: 14px;
+  opacity: 0;
+  animation: fade-in 0.7s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

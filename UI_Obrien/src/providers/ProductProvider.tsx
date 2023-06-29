@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { IProduct } from '~/interfaces/IProduct'
 import { addProduct, deleteProduct, getProducts, updateProduct } from '~/services/api/product'
 
-const ProductCrud = () => {
+const ProductProvider = () => {
   const navigate = useNavigate()
   // GET CATEGORIES
   const [products, setProducts] = useState<IProduct[]>([])
@@ -20,10 +20,6 @@ const ProductCrud = () => {
         setProducts(products.docs)
         setTotalPages(products.totalPages)
       } catch (error: any) {
-        if (error.response.data.message) {
-          message.error(error.response.data.message)
-          setProducts([])
-        }
         console.error(error)
       }
     })()
@@ -91,4 +87,4 @@ const ProductCrud = () => {
   }
 }
 
-export default ProductCrud
+export default ProductProvider

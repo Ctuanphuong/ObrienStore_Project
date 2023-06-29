@@ -13,22 +13,22 @@ const cx = classNames.bind(styles)
 const { Search } = Input
 
 const ProductList = () => {
-  const { productCrud } = useCombinedContext()
+  const { productProvider } = useCombinedContext()
   // GET PRODUCTS
   const [products, setProducts] = useState<IProduct[]>([])
   useEffect(() => {
-    setProducts(productCrud.products)
-  }, [productCrud.products])
+    setProducts(productProvider.products)
+  }, [productProvider.products])
 
   // Xử lý để render số page theo thứ tự
   const renderPageNumbers = () => {
     const pageNumbers = []
-    for (let i = 1; i <= productCrud.totalPages; i++) {
+    for (let i = 1; i <= productProvider.totalPages; i++) {
       pageNumbers.push(
         <button
           key={i}
-          onClick={() => productCrud.onChangePage(i)}
-          className={cx({ 'active-pag': i === productCrud.currentPage })}
+          onClick={() => productProvider.onChangePage(i)}
+          className={cx({ 'active-pag': i === productProvider.currentPage })}
         >
           {i}
         </button>
@@ -38,9 +38,9 @@ const ProductList = () => {
   }
 
   // Get columns
-  const columns = productColumns(productCrud)
+  const columns = productColumns(productProvider)
   const onSearch = (value: string) => {
-    productCrud.setKeywords(value)
+    productProvider.setKeywords(value)
   }
 
   return (
@@ -57,15 +57,15 @@ const ProductList = () => {
       <Table columns={columns} dataSource={products} pagination={false} rowKey={(record) => record._id!} />
       <div className={cx('pagination')}>
         <button
-          disabled={productCrud.currentPage === 1}
-          onClick={() => productCrud.onChangePage(productCrud.currentPage - 1)}
+          disabled={productProvider.currentPage === 1}
+          onClick={() => productProvider.onChangePage(productProvider.currentPage - 1)}
         >
           &laquo;
         </button>
         {renderPageNumbers()}
         <button
-          disabled={productCrud.currentPage === productCrud.totalPages}
-          onClick={() => productCrud.onChangePage(productCrud.currentPage + 1)}
+          disabled={productProvider.currentPage === productProvider.totalPages}
+          onClick={() => productProvider.onChangePage(productProvider.currentPage + 1)}
         >
           &raquo;
         </button>

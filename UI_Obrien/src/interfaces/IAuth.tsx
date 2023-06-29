@@ -7,7 +7,7 @@ export interface LoginUser {
 
 export interface RegisterUser extends LoginUser {
   name: string
-  phone: number
+  phone: string
   confirmPassword: string
 }
 

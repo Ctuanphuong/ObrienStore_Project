@@ -35,10 +35,7 @@ export const items: MenuItem[] = [
     getItem(<Link to={'/admin/products'}>View List</Link>, '5'),
     getItem(<Link to={'/admin/products/create'}>Create New</Link>, '6')
   ]),
-  getItem('Bill', 'sub3', <FileDoneOutlined />, [
-    getItem(<Link to={'/admin/bills'}>View List</Link>, '7'),
-    getItem(<Link to={'/admin/bills/create'}>Create New</Link>, '8')
-  ])
+  getItem('Bill', 'sub3', <FileDoneOutlined />, [getItem(<Link to={'/admin/bills'}>View List</Link>, '7')])
 ]
 
 export const settingSideItems = () => {

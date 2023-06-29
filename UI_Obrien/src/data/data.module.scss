@@ -40,8 +40,24 @@
   }
 }
 
-.btn-actions {
+.btn-info {
+  color: #1677ff;
+  border: 1px solid #1677ff;
   padding: 10px;
+  display: flex;
+  align-items: center;
+  &:hover {
+    color: #1677ff !important;
+    border: 1px solid #1677ff !important;
+    opacity: 70%;
+  }
+
+  svg {
+    font-size: 16px;
+  }
+}
+
+.btn-actions {
   display: flex;
   align-items: center;
 
@@ -73,4 +89,21 @@
   text-transform: capitalize;
   color: #06b6d4;
   font-weight: 500;
+}
+
+.status-order {
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1px 3px;
+  border-radius: 50px;
+  text-align: center;
+  user-select: none;
+}
+
+.doing {
+  background-color: #f4a82df3;
+}
+
+.done {
+  background-color: #08cd18;
 }

@@ -9,7 +9,14 @@ const billSchema = new Schema(
     totalPrice: Number,
     totalOrder: Number,
     paymentMethod: String,
-    orderNotes: String,
+    orderNotes: { type: String, default: "Customer does not write anything." },
+    products: [
+      {
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        quantity: Number,
+        price: Number,
+      },
+    ],
     paymentStatus: {
       type: String,
       enum: ["Paid", "Unpaid"],

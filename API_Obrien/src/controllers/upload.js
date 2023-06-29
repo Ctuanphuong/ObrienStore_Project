@@ -45,7 +45,6 @@ export const uploadImage = async (req, res) => {
 export const deleteImage = async (req, res) => {
   const { publicId } = req.params;
   try {
-    console.log(publicId);
     const result = await cloudinary.uploader.destroy(publicId);
     return res.status(200).json({
       message: "Image deleted successfully!",

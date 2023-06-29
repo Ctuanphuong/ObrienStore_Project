@@ -1,3 +1,6 @@
+import BillDetails from '~/pages/Admin/Bill/BillDetails'
+import BillList from '~/pages/Admin/Bill/BillList'
+import BillUpdate from '~/pages/Admin/Bill/BillUpdate'
 import CategoryCreate from '~/pages/Admin/Category/CategoryCreate'
 import CategoryList from '~/pages/Admin/Category/CategoryList'
 import CategoryUpdate from '~/pages/Admin/Category/CategoryUpdate'
@@ -8,10 +11,8 @@ import Register from '~/pages/Auth/Register'
 import Cart from '~/pages/Cart'
 import CheckOut from '~/pages/Cart/CheckOut'
 import Home from '~/pages/Home'
-import PageNotAuth from '~/pages/PageNotAuth'
 import Product from '~/pages/Product'
 import ProductDetail from '~/pages/ProductDetail'
-import { ForgotPassword } from '~/pages/User/Password'
 export const publicRoutes = [
   {
     path: '/',
@@ -30,7 +31,7 @@ export const publicRoutes = [
     component: ProductDetail
   },
   { path: '/cart/:userId', component: Cart },
-  { path: '/checkout', component: CheckOut },
+  { path: '/checkout/:userId', component: CheckOut },
 
   // Auth router
   { path: '/login', component: Login },
@@ -77,6 +78,21 @@ export const privateRoutes = [
   {
     path: '/admin/categories/update/:id',
     component: CategoryUpdate
+  },
+
+  // Bill router
+  {
+    path: '/admin/bills',
+    component: BillList
+  },
+  {
+    path: '/admin/bills/details/:billId',
+    component: BillDetails
+  },
+  {
+    path: '/admin/bills/update/:billId',
+    component: BillUpdate
   }
+  // End Bill router
   // End Category router
 ]

@@ -13,23 +13,23 @@ const cx = classNames.bind(styles)
 const { Search } = Input
 
 const CategoryList = () => {
-  const { categoryCrud } = useCombinedContext()
+  const { categoryProvider } = useCombinedContext()
 
   // GET CATEGORIES
   const [categoryArr, setCategoryArr] = useState<ICategory[]>([])
   useEffect(() => {
-    setCategoryArr(categoryCrud.categories)
-  }, [categoryCrud.categories])
+    setCategoryArr(categoryProvider.categories)
+  }, [categoryProvider.categories])
 
   // Xử lý để render số page theo thứ tự
   const renderPageNumbers = () => {
     const pageNumbers = []
-    for (let i = 1; i <= categoryCrud.totalPages; i++) {
+    for (let i = 1; i <= categoryProvider.totalPages; i++) {
       pageNumbers.push(
         <button
           key={i}
-          onClick={() => categoryCrud.onChangePage(i)}
-          className={cx({ 'active-pag': i === categoryCrud.currentPage })}
+          onClick={() => categoryProvider.onChangePage(i)}
+          className={cx({ 'active-pag': i === categoryProvider.currentPage })}
         >
           {i}
         </button>
@@ -39,11 +39,11 @@ const CategoryList = () => {
   }
 
   //get columns
-  const columns = CategoryColumns(categoryCrud)
+  const columns = CategoryColumns(categoryProvider)
 
   // Set lại keywords khi bấm nút search
   const onSearch = (value: string) => {
-    categoryCrud.setKeywords(value)
+    categoryProvider.setKeywords(value)
   }
 
   return (
@@ -60,15 +60,15 @@ const CategoryList = () => {
       <Table columns={columns} dataSource={categoryArr} rowKey={(record) => record._id!} pagination={false} />
       <div className={cx('pagination')}>
         <button
-          disabled={categoryCrud.currentPage === 1}
-          onClick={() => categoryCrud.onChangePage(categoryCrud.currentPage - 1)}
+          disabled={categoryProvider.currentPage === 1}
+          onClick={() => categoryProvider.onChangePage(categoryProvider.currentPage - 1)}
         >
           &laquo;
         </button>
         {renderPageNumbers()}
         <button
-          disabled={categoryCrud.currentPage === categoryCrud.totalPages}
-          onClick={() => categoryCrud.onChangePage(categoryCrud.currentPage + 1)}
+          disabled={categoryProvider.currentPage === categoryProvider.totalPages}
+          onClick={() => categoryProvider.onChangePage(categoryProvider.currentPage + 1)}
         >
           &raquo;
         </button>

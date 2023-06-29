@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { IAddToCart, ICheckOut, IDeleteCart, IDeleteOneProductCart } from '~/interfaces/ICart'
 import { IProduct } from '~/interfaces/IProduct'
-import { addToCart, deleteAllProduct, deleteOneProduct, getCartUser, updateCart } from '~/services/api/cart'
-
+import { addToCart, checkOut, deleteAllProduct, deleteOneProduct, getCartUser, updateCart } from '~/services/api/cart'
+import { useNavigate } from 'react-router-dom'
 const CartProvider = () => {
+  const navigate = useNavigate()
   const [cart, setCart] = useState([])
   const [products, setProducts] = useState<IProduct[]>([])
   const [userId, setUserId] = useState('')
   const [reloadCart, setReloadCart] = useState(false)
+  const [redirectResults, setRedirectResults] = useState(false)
+  const [redirectCheckOut, setRedirectCheckOut] = useState(false)
+
   const expiredTokenFail = 'Token has expired! Please login again.'
 
   useEffect(() => {
@@ -103,9 +107,12 @@ const CartProvider = () => {
   // CHECK OUT
   const onCheckOut = async (dataCart: ICheckOut) => {
     try {
-      console.log(dataCart)
+      const { data } = await checkOut(dataCart)
+      await setReloadCart(!reloadCart)
+      navigate(`/order-success/${data.bill._id}`)
+      setRedirectResults(true)
     } catch (error) {
-      console.log(error)
+      message.error(`A server error has occurred! Please try again later.`)
     }
   }
 
@@ -117,8 +124,11 @@ const CartProvider = () => {
     onDeleteOneProductCart,
     onDeleteCart,
     setReloadCart,
+    setRedirectCheckOut,
+    redirectCheckOut,
     cart,
-    products
+    products,
+    redirectResults
   }
 }
 

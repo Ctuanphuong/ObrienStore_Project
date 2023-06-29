@@ -8,12 +8,12 @@ const cx = classNames.bind(styles)
 type SizeType = Parameters<typeof Form>[0]['size']
 
 const CategoryCreate = () => {
-  const { categoryCrud } = useCombinedContext()
+  const { categoryProvider } = useCombinedContext()
 
   // Submit form
   const onFinish = (values: any) => {
     delete values.size
-    categoryCrud.onAdd(values)
+    categoryProvider.onAdd(values)
   }
 
   const onFinishFailed = (error: any) => {

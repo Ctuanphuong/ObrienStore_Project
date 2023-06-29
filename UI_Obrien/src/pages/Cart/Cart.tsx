@@ -101,7 +101,7 @@ const Cart = () => {
         <Empty
           image='https://res.cloudinary.com/phuong-fpoly/image/upload/v1687833885/Obrien%20Store/messy/preview-removebg-preview_omf3kb.png'
           imageStyle={{ height: 200, marginTop: 75 }}
-          description={<span style={{ fontSize: 17 }}>There are no products in your cart yet.</span>}
+          description={<span style={{ fontSize: 17 }}>There are no product in your cart.</span>}
         >
           <Link to={'/product'}>
             <Button regular>Add Now</Button>
@@ -270,7 +270,7 @@ const Cart = () => {
                     </tbody>
                   </table>
                 </div>
-                <Button to={'/checkout'} longerPink>
+                <Button to={`/checkout/${userId}`} longerPink onClick={() => cartProvider.setRedirectCheckOut(true)}>
                   Proceed To Checkout
                 </Button>
               </div>

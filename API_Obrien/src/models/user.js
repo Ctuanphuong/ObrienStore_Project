@@ -3,7 +3,7 @@ const userSchema = new Schema(
   {
     name: { type: String, minLength: 3, maxLength: 55, required: true },
     email: { type: String, required: true, unique: true },
-    phone: { type: Number, required: true, unique: true },
+    phone: { type: String, required: true, unique: true },
     address: { type: String, default: "" },
     avatar: { type: String, default: "" },
     password: { type: String, required: true },

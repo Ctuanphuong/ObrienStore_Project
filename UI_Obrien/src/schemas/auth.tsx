@@ -3,7 +3,7 @@ import Joi from 'joi'
 export const registerSchema = Joi.object({
   name: Joi.string()
     .trim()
-    .min(5)
+    .min(3)
     .max(55)
     .required()
     .pattern(/^\S.*$/)
@@ -24,12 +24,12 @@ export const registerSchema = Joi.object({
     }),
   phone: Joi.string()
     .trim()
-    .pattern(/^[0-9]{10,11}$/)
+    .pattern(/^(\+|0)?[0-9]{10,11}$/)
     .required()
     .messages({
       'string.base': 'Phone number must be a string of numbers!',
       'string.empty': "The 'phone number' field cannot be empty!",
-      'string.pattern.base': 'Invalid phone number!',
+      'string.pattern.base': 'Invalid phone number! ',
       'any.required': "The 'phone number' field is required!"
     }),
   password: Joi.string()

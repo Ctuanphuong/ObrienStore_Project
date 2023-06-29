@@ -8,6 +8,7 @@ const Button = ({
   to,
   href,
   regular = false,
+  regularWhite = false,
   primary = false,
   secondary = false,
   dark = false,
@@ -48,7 +49,8 @@ const Button = ({
     longerPink,
     longerDark,
     [className]: className,
-    regular
+    regular,
+    regularWhite
   })
 
   return (

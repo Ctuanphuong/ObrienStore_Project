@@ -4,21 +4,25 @@ import { privateRoutes, publicRoutes } from './routes'
 import AdminLayout from './layouts/AdminLayout/AdminLayout'
 import PageNotFound from './pages/PageNotFound/PageNotFound'
 import CombinedProvider from './providers/CombinedProvider.tsx'
-import ProductCrud from './providers/ProductCrud.tsx'
-import CategoryCrud from './providers/CategoryCrud.tsx'
+import ProductProvider from './providers/ProductProvider.tsx'
+import CategoryProvider from './providers/CategoryProvider.tsx'
 import AuthProvider from './providers/AuthProvider.tsx'
 import PageNotAuth from './pages/PageNotAuth/PageNotAuth.tsx'
 import VerifyEmail from './pages/Verify/VerifyEmail.tsx'
 import ResetPassword from './pages/User/Password/ResetPassword.tsx'
 import ForgotPassword from './pages/User/Password/ForgotPassword.tsx'
 import CartProvider from './providers/CartProvider.tsx'
+import Results from './components/Results/Results.tsx'
+import Bill from './pages/Bill/Bill.tsx'
+import BillProvider from './providers/BillProvider.tsx'
 function App() {
   return (
     <CombinedProvider
-      productCrud={ProductCrud()}
-      categoryCrud={CategoryCrud()}
+      productProvider={ProductProvider()}
+      categoryProvider={CategoryProvider()}
       authProvider={AuthProvider()}
       cartProvider={CartProvider()}
+      billProvider={BillProvider()}
     >
       <Routes>
         {/* Client Route */}
@@ -54,10 +58,12 @@ function App() {
         })}
 
         <Route path='*' element={<PageNotFound />} />
+        <Route path='/user/bill/:billId' element={<Bill />} />
         <Route path='/page-not-authorization' element={<PageNotAuth />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/order-success/:billId' element={<Results />} />
       </Routes>
     </CombinedProvider>
   )

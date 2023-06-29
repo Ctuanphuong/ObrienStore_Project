@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { ICategory } from '~/interfaces/ICategory'
 import { addCategory, deleteCategory, getCategories, updateCategory } from '~/services/api/category'
 
-const CategoryCrud = () => {
+const CategoryProvider = () => {
   const navigate = useNavigate()
   // GET CATEGORIES
   const [categories, setCategories] = useState<ICategory[]>([])
@@ -21,10 +21,6 @@ const CategoryCrud = () => {
         setCategories(categories.docs)
         setTotalPages(categories.totalPages)
       } catch (error: any) {
-        if (error.response.data.message) {
-          message.error(error.response.data.message)
-          setCategories([])
-        }
         console.error(error)
       }
     })()
@@ -92,4 +88,4 @@ const CategoryCrud = () => {
   }
 }
 
-export default CategoryCrud
+export default CategoryProvider

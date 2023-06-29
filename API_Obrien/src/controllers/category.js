@@ -53,7 +53,6 @@ export const getCategory = async (req, res) => {
       });
     }
 
-    console.log(category);
     return res.status(200).json({
       message: "Get the category successfully!",
       category,
@@ -169,6 +168,7 @@ export const deleteCategory = async (req, res) => {
 
     // Tìm và chuyển các sản phẩm liên quan sang danh mục "uncategorized"
     const productsToUpdate = await Product.find({ categoryId: id });
+
     // Tìm xem đã có danh mục Uncategorized trong db chưa
     const uncategorizedCategory = await Category.findOne({
       name: "Uncategorized",

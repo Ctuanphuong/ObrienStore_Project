@@ -243,9 +243,11 @@
     box-shadow: 0 5px 11px rgba(0, 0, 0, 0.14);
     transition: 0.4s;
 
-    .product-image img {
-      transform: scale(1.1);
-      transition: all 0.9s ease;
+    .product-image {
+      img {
+        transform: scale(1.1);
+        transition: all 0.9s ease;
+      }
     }
 
     .add-to-cart {
@@ -320,9 +322,8 @@
 }
 
 .product-image img {
-  max-width: 100%;
-  min-width: 255px;
-  min-height: 255px;
+  width: 255px;
+  height: 255px;
   object-fit: cover;
   vertical-align: middle;
 }

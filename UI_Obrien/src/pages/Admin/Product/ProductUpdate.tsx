@@ -17,7 +17,7 @@ const { Option } = Select
 
 const ProductUpdate = () => {
   const { id } = useParams()
-  const { productCrud, categoryCrud } = useCombinedContext()
+  const { productProvider, categoryProvider } = useCombinedContext()
 
   const [categories, setCategories] = useState<ICategory[]>([])
   const [product, setProduct] = useState<IProduct>()
@@ -25,13 +25,13 @@ const ProductUpdate = () => {
 
   // Get one product
   useEffect(() => {
-    setProduct(productCrud.products.find((p: IProduct) => p._id === id))
-  }, [productCrud.products])
+    setProduct(productProvider.products.find((p: IProduct) => p._id === id))
+  }, [productProvider.products])
 
   // Get all categories
   useEffect(() => {
-    setCategories(categoryCrud.categories)
-  }, [categoryCrud.categories])
+    setCategories(categoryProvider.categories)
+  }, [categoryProvider.categories])
 
   // gọi lại hàm này khi products thay đổi
   useEffect(() => {
@@ -62,7 +62,7 @@ const ProductUpdate = () => {
       images = values.images
     }
 
-    productCrud.onUpdate({ ...values, images })
+    productProvider.onUpdate({ ...values, images })
   }
 
   const onFinishFailed = (error: any) => {

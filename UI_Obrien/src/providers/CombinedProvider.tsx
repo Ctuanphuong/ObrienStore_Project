@@ -1,8 +1,15 @@
 import { createContext, useContext } from 'react'
 
 const CombinedContext = createContext<any>({})
-const CombinedProvider = ({ productCrud, categoryCrud, authProvider, cartProvider, children }: any) => {
-  const combinedContextValue = { productCrud, categoryCrud, authProvider, cartProvider }
+const CombinedProvider = ({
+  productProvider,
+  categoryProvider,
+  authProvider,
+  cartProvider,
+  billProvider,
+  children
+}: any) => {
+  const combinedContextValue = { productProvider, categoryProvider, authProvider, cartProvider, billProvider }
   return <CombinedContext.Provider value={combinedContextValue}>{children}</CombinedContext.Provider>
 }
 

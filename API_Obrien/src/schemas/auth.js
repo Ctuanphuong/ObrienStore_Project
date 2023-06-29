@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const registerSchema = Joi.object({
-  name: Joi.string().min(5).max(55).required().messages({
+  name: Joi.string().min(3).max(55).required().messages({
     "string.empty": 'The "name" field cannot be empty',
     "string.min": "Name must be at least {#limit} characters.",
     "string.max": "Name cannot exceed {#limit} characters.",
@@ -17,7 +17,7 @@ export const registerSchema = Joi.object({
     }),
   phone: Joi.string()
     .trim()
-    .pattern(/^[0-9]{10,11}$/)
+    .pattern(/^(\+|0)?[0-9]{10,11}$/)
     .required()
     .messages({
       "string.base": "Phone number must be a string of numbers!",

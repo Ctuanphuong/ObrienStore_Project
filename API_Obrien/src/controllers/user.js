@@ -248,8 +248,7 @@ export const verifyToken = async (req, res, next) => {
 export const resetPassword = async (req, res) => {
   try {
     const { email, verifyToken, password } = req.body;
-    console.log(email);
-    console.log(verifyToken);
+
     const user = await User.findOne({ email, verifyToken });
     if (!user) {
       return res.status(400).json({

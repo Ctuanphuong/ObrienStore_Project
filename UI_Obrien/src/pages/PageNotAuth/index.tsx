@@ -1,3 +1,1 @@
-import PageNotAuth from './PageNotAuth'
-
-export default PageNotAuth
+export { default } from './PageNotAuth'

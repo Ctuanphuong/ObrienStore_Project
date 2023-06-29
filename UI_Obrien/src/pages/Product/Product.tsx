@@ -34,11 +34,11 @@ const Product = () => {
   }
 
   // end phần chuyển đổi giao diện
-  const { productCrud } = useCombinedContext()
+  const { productProvider } = useCombinedContext()
   const [products, setProducts] = useState<IProduct[]>([])
   useEffect(() => {
-    setProducts(productCrud.products)
-  }, [productCrud.products])
+    setProducts(productProvider.products)
+  }, [productProvider.products])
 
   const recentProducts = products.slice(0, 3)
 

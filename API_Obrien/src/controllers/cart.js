@@ -27,7 +27,9 @@ export const getCart = async (req, res) => {
 
   try {
     // Tìm kiếm giỏ hàng của người dùng
-    let cart = await Cart.findOne({ userId }).populate("products.productId");
+    let cart = await Cart.findOne({ userId })
+      .populate("products.productId")
+      .populate("userId");
 
     // Nếu không tìm thấy giỏ hàng, trả về lỗi
     if (!cart) {
@@ -194,8 +196,7 @@ export const deleteAllProductCart = async (req, res) => {
 
 // CHECKOUT
 export const checkOut = async (req, res) => {
-  const { userId, shippingAdress, paymentMethod, orderNotes } = req.body;
-  let cartProductInfo = {};
+  const { userId, shippingAddress, paymentMethod, orderNotes } = req.body;
   try {
     // Tìm kiếm giỏ hàng của người dùng
     const cart = await Cart.findOne({ userId: userId }).populate(
@@ -209,11 +210,6 @@ export const checkOut = async (req, res) => {
         .json({ message: "Cart not found or cart has no products!" });
     }
 
-    // Lưu thông tin sản phẩm trong giỏ hàng vào biến cartInfo
-    cartProductInfo = {
-      products: [...cart.products],
-    };
-
     // Lấy thông tin user
     const user = await User.findById(userId);
 
@@ -223,10 +219,11 @@ export const checkOut = async (req, res) => {
       cartId: cart._id,
       totalPrice: cart.totalPrice,
       shippingFee: cart.shippingFee,
-      shippingAdress: user.address || shippingAdress,
+      shippingAddress: user.address || shippingAddress,
       totalOrder: cart.totalOrder,
       paymentMethod: paymentMethod,
       orderNotes: orderNotes,
+      products: cart.products,
     });
 
     // Populate thông tin từ bảng User và Cart
@@ -247,7 +244,7 @@ export const checkOut = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Order placed successfully!", bill, cartProductInfo });
+      .json({ message: "Order placed successfully!", bill });
   } catch (error) {
     return res.status(500).json({
       message: error.message,

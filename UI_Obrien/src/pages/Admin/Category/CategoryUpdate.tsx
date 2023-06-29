@@ -10,7 +10,7 @@ const cx = classNames.bind(styles)
 type SizeType = Parameters<typeof Form>[0]['size']
 
 const CategoryUpdate = () => {
-  const { categoryCrud } = useCombinedContext()
+  const { categoryProvider } = useCombinedContext()
   const { id } = useParams()
 
   // Get category
@@ -18,8 +18,8 @@ const CategoryUpdate = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    setCategory(categoryCrud.categories.find((category: ICategory) => category._id === id))
-  }, [categoryCrud.categories])
+    setCategory(categoryProvider.categories.find((category: ICategory) => category._id === id))
+  }, [categoryProvider.categories])
 
   // Khi category thay đổi giá trị thì gọi lại đoạn này để set giá trị cho form
   useEffect(() => {
@@ -41,7 +41,7 @@ const CategoryUpdate = () => {
     if (values.name === 'Uncategorized') {
       return message.error(`Not allowed to update the "Uncategorized" category!`)
     }
-    categoryCrud.onUpdate(values)
+    categoryProvider.onUpdate(values)
   }
 
   const onFinishFailed = (error: any) => {

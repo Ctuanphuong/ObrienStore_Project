@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Form, Input, InputNumber, Radio, Select, Upload, message } from 'antd'
+import { Button, Form, Input, InputNumber, Radio, Select, Upload } from 'antd'
 import styles from '../Category/Category.module.scss'
 import classNames from 'classnames/bind'
 import { useCombinedContext } from '~/providers/CombinedProvider'
@@ -14,24 +14,20 @@ const { TextArea } = Input
 const { Option } = Select
 
 const ProductCreate = () => {
-  const { productCrud, categoryCrud } = useCombinedContext()
+  const { productProvider, categoryProvider } = useCombinedContext()
 
   const [categories, setCategories] = useState<ICategory[]>([])
 
   // Get all categories
   useEffect(() => {
-    setCategories(categoryCrud.categories)
-  }, [categoryCrud.categories])
+    setCategories(categoryProvider.categories)
+  }, [categoryProvider.categories])
 
   // Submit form
   const onFinish = (values: any) => {
-    console.log(values.images)
-
     delete values.size
     const images = values.images.fileList.map((image: any) => image.response.image_urls[0])
-    console.log(images)
-
-    productCrud.onAdd({ ...values, images })
+    productProvider.onAdd({ ...values, images })
   }
 
   const onFinishFailed = (error: any) => {

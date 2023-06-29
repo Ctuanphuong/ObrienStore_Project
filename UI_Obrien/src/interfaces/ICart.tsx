@@ -26,6 +26,9 @@ export interface IProductCart {
 }
 
 export interface ICheckOut {
+  name: string
+  email: string
+  phone: number
   userId: string
   shippingAdress: string
   paymentMethod: string
