@@ -74,11 +74,15 @@ export const addToCart = async (req, res) => {
       cart.products.push({
         productId: product._id,
         quantity: quantity,
-        price: product.price,
+        price: product.price * quantity,
       });
     } else {
       // Sản phẩm đã tồn tại trong giỏ hàng, chỉ cần cập nhật số lượng và giá
-      productExists.quantity++;
+      if (quantity === 1) {
+        productExists.quantity++;
+      } else {
+        productExists.quantity += quantity;
+      }
       const getPriceProduct = await Product.findById(productId).select("price");
       productExists.price = getPriceProduct.price * productExists.quantity;
     }
@@ -88,7 +92,7 @@ export const addToCart = async (req, res) => {
     // Tính tổng giá của giỏ hàng
     handleTotalOrder(cart);
 
-    res
+    return res
       .status(200)
       .json({ message: "The product has been added to cart.", cart });
   } catch (error) {

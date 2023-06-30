@@ -1,19 +1,68 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BreadCrumbs from '~/components/BreadCrumbs'
 import styles from './ProductDetail.module.scss'
 import classNames from 'classnames/bind'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMinus, faPlus, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faDollar, faMinus, faPlus, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons'
 import Button from '~/components/Button'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { useCombinedContext } from '~/providers/CombinedProvider'
+import { IProduct } from '~/interfaces/IProduct'
+import { getProduct } from '~/services/api/product'
+import getDecodedUser from '~/components/Auth/getDecodedUser'
 
 const cx = classNames.bind(styles)
 
 const ProductDetail = () => {
+  const { id } = useParams()
+  const user = getDecodedUser()
+  const { productProvider, cartProvider } = useCombinedContext()
+  const [product, setProduct] = useState<IProduct>()
+  const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState(1)
+  // Get One Product
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const { data } = await getProduct(id!)
+        setProduct(data.product)
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [id])
 
+  const sameCategory = productProvider.products.filter((p: IProduct) =>
+    p._id !== id && p.categoryId === product?.categoryId?._id ? product : null
+  )
+
+  const onHandleChange = (e: any) => {
+    setQuantity(Number(e.target.value))
+  }
+
+  // Handle Increase quantity
+  const onHandleIncrease = () => {
+    setQuantity(quantity + 1)
+  }
+
+  // Handle Decrease quantity
+  const onHandleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1)
+    }
+  }
+
+  // Handle AddToCart
+  const onHandleAdd = () => {
+    cartProvider.onAddToCart({
+      userId: user?._id,
+      productId: product?._id,
+      quantity: quantity
+    })
+  }
+  // Change Tab
   const handleChangeTab = (index: number): any => {
     setActiveTab(index)
   }
@@ -27,48 +76,32 @@ const ProductDetail = () => {
             {/* col image */}
             <div className={cx('col-img')}>
               <div className={cx('big-img')}>
-                <Link to={'/product/:id'}>
-                  <img
-                    src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-11_ibyufb.webp'
-                    alt="Obrien's details image"
-                  />
+                <Link to={`/product/${product?._id}`}>
+                  <img src={product?.images[0].url} alt="Obrien's details image" />
                 </Link>
               </div>
               <div className={cx('multiple-img')}>
-                <div className={cx('small-img')}>
-                  <img
-                    src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685888980/Obrien%20Store/messy/dua2_tuiqbk.png'
-                    alt="Obrien's small image"
-                  />
-                </div>
-                <div className={cx('small-img')}>
-                  <img
-                    src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685888980/Obrien%20Store/messy/dua4_reqnsb.png'
-                    alt="Obrien's small image"
-                  />
-                </div>
-                <div className={cx('small-img')}>
-                  <img
-                    src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685888979/Obrien%20Store/messy/dua3_pmuayr.png'
-                    alt="Obrien's small image"
-                  />
-                </div>
-                <div className={cx('small-img')}>
-                  <img
-                    src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-11_ibyufb.webp'
-                    alt="Obrien's small image"
-                  />
-                </div>
+                {product?.images.map((image) => (
+                  <div className={cx('small-img')} key={product._id}>
+                    <img src={image.url} alt="Obrien's small image" />
+                  </div>
+                ))}
               </div>
             </div>
             {/* col image */}
 
             {/* col detail */}
             <div className={cx('col-details')}>
-              <h2 className={cx('product-name-detail')}>Fresh Pineapple</h2>
+              <h2 className={cx('product-name-detail')}>{product?.name}</h2>
               <div className={cx('price-box')}>
-                <span className={cx('regular-price-detail')}>$80.00</span>
-                <del className={cx('old-price-detail')}>$90.00</del>
+                <span className={cx('regular-price-detail')}>
+                  <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-large')} />
+                  {product?.price}
+                </span>
+                <del className={cx('old-price-detail')}>
+                  <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-old-price-large')} />
+                  {product?.price}
+                </del>
               </div>
               <div className={cx('product-rating-detail')}>
                 <FontAwesomeIcon icon={faStar} />
@@ -77,40 +110,40 @@ const ProductDetail = () => {
                 <FontAwesomeIcon icon={faStarRegular} />
                 <FontAwesomeIcon icon={faStarRegular} />
               </div>
-              <p className={cx('sku')}>SKU: FAP001</p>
-              <p className={cx('desc-content')}>
-                I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I
-                will give you a complete account of the system, and expound the actual teachings of the great explorer
-                of the truth, the master-builder of human happiness.
+              <p className={cx('sku')}>
+                SKU: <strong>#{product?._id}</strong>
               </p>
+              <p className={cx('desc-content')}>{product?.description}</p>
               {/* col detail */}
 
               {/* actions area */}
               <div className={cx('actions-area')}>
                 <div className={cx('wrap-actions-add')}>
                   <div className={cx('quantity')}>
-                    <input type='text' defaultValue={'0'} className={cx('cart-mini')} />
+                    <input type='text' value={quantity} className={cx('cart-mini')} onChange={onHandleChange} />
                     <button className={cx('btn-desc')}>
-                      <FontAwesomeIcon icon={faMinus} />
+                      <FontAwesomeIcon icon={faMinus} onClick={onHandleDecrease} />
                     </button>
                     <button className={cx('btn-plus')}>
-                      <FontAwesomeIcon icon={faPlus} />
+                      <FontAwesomeIcon icon={faPlus} onClick={onHandleIncrease} />
                     </button>
                   </div>
                   <div className={cx('add-btn-wrapper')}>
-                    <Button primary className={cx('btn-add')}>
+                    <Button primary className={cx('btn-add')} onClick={onHandleAdd}>
                       Add to cart
                     </Button>
-                    <Button white>Add to wishlist</Button>
+                    <Button white className={cx('disabled')}>
+                      Add to wishlist
+                    </Button>
                   </div>
                 </div>
-                <div className={cx('buy-btn')}>
+                <div className={cx('buy-btn')} onClick={onHandleAdd}>
                   <Button large>Buy it now</Button>
                 </div>
                 {/* actions area */}
 
                 {/* share product */}
-                <div className={cx('share-product')}>
+                <div className={cx('share-product', 'disabled')}>
                   <span>Share: </span>
                   <a href='#'>
                     <svg
@@ -229,22 +262,19 @@ const ProductDetail = () => {
                 <div className={cx('tab-pane')}>
                   <div className={cx('desc-tab-content')}>
                     <p>
-                      On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and
-                      demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot
-                      foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in
-                      their duty through weakness of will, which is the same as saying through shrinking from toil and
-                      pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of
-                      choice is untrammelled and when nothing prevents our being able to do what we like best, every
-                      pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the
-                      claims of duty or the obligations of business it will frequently occur that pleasures have to be
-                      repudiated and annoyances accepted. The wise man therefore always holds in these matters to this
-                      principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures
-                      pains to avoid worse pains. Et harum quidem rerum facilis est et expedita distinctio. Nam libero
-                      tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat
-                      facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam
-                      et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint
-                      et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis
-                      voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+                      We hope that all consumers will be able to use the freshest, most nutritious and safest fruit and
+                      vegetable products at Dung Ha Agricultural Products Store. With the mission of becoming one of the
+                      leading suppliers of clean food and processing agricultural products, packing fresh dry goods for
+                      export in Vietnam, reaching out all over the world. Dung Ha is committed to bringing consumers the
+                      freshest agricultural products from all over the country with the aim of "Bringing nature into
+                      your home". With a strict selection and control process of Agricultural Products, Dung Ha has
+                      created an investment fund specializing in purchasing and supplying and distributing the freshest
+                      and freshest vegetable products from farms to distribute to consumers to help them have The
+                      freshest meals in each distinct product from nature. With the business philosophy of complying and
+                      ensuring the freshest quality, the origin of the product is clear. We are committed to not using
+                      any preservatives that are prohibited by the Ministry of Health from being used and commitment to
+                      customers about all products distributed through the distribution system of Obrien Organic to
+                      ensure the safest.
                     </p>
                   </div>
                 </div>
@@ -254,7 +284,7 @@ const ProductDetail = () => {
               {/* one connect */}
               {activeTab === 2 && (
                 <div className={cx('tab-pane')}>
-                  <p>chu tuan phuong</p>
+                  <p>Waiting to update the Reviews feature...</p>
                 </div>
               )}
               {/* one connect */}
@@ -262,7 +292,7 @@ const ProductDetail = () => {
               {/* one connect */}
               {activeTab === 3 && (
                 <div className={cx('tab-pane')}>
-                  <p>phuong dzvl</p>
+                  <p>Waiting for shipping policy update...</p>
                 </div>
               )}
               {/* one connect */}
@@ -270,14 +300,15 @@ const ProductDetail = () => {
               {/* one connect */}
               {activeTab === 4 && (
                 <div className={cx('tab-pane')}>
-                  <p>tuanphuongday</p>
+                  <p>Waiting for update size chart...</p>
                 </div>
               )}
               {/* one connect */}
             </div>
           </div>
           {/* row 2 */}
-          {/* FPRODUCT */}
+
+          {/* SAME PRODUCT */}
           <div className={cx('product-area')}>
             <div className={cx('container')}>
               <div className={cx('row')}>
@@ -293,183 +324,64 @@ const ProductDetail = () => {
               <div className={cx('product-wrapper')}>
                 {/* one product */}
 
-                <div className={cx('wrap-col-product')}>
-                  <div className={cx('col-product')}>
-                    <div className={cx('product-image')}>
-                      <Link to={'/product'}>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847064/Obrien%20Store/product/product-14_pbi7jo.png'
-                          alt="Obrien's product"
-                        />
-                      </Link>
-                    </div>
-                    {/* <div className={cx('label-product')}>
+                {sameCategory?.map((productSame: IProduct) => (
+                  <div className={cx('wrap-col-product')} key={productSame._id}>
+                    <div className={cx('col-product')}>
+                      <div className={cx('product-image')}>
+                        <Link to={`/product/${productSame._id}`}>
+                          <img src={productSame.images[0].url} alt="Obrien's product" />
+                        </Link>
+                      </div>
+                      {/* <div className={cx('label-product')}>
                   <span>Soldout</span>
                 </div> */}
-                    <div className={cx('product-context')}>
-                      <div className={cx('product-rating')}>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                      </div>
-                      <div className={cx('product-name')}>
-                        <h3>
-                          <Link to={'/product'}>Fresh Plums</Link>
-                        </h3>
+                      <div className={cx('product-context')}>
+                        <div className={cx('product-rating')}>
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStarRegular} />
+                          <FontAwesomeIcon icon={faStarRegular} />
+                        </div>
+                        <div className={cx('product-name')}>
+                          <h3>
+                            <Link to={`/product/${productSame._id}`}>{productSame.name}</Link>
+                          </h3>
 
-                        <button>
-                          <FontAwesomeIcon icon={faThumbsUp} />
+                          <button>
+                            <FontAwesomeIcon icon={faThumbsUp} />
+                          </button>
+                        </div>
+                        <div className={cx('product-price')}>
+                          <span className={cx('regular-price')}>
+                            <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                            {productSame.price}
+                          </span>
+                          <span className={cx('old-price')}>
+                            <del>
+                              <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-old-price')} />
+                              {productSame.price}
+                            </del>
+                          </span>
+                        </div>
+                      </div>
+                      <div className={cx('add-to-cart')}>
+                        <button
+                          className={cx('btn-add')}
+                          onClick={() =>
+                            cartProvider.onAddToCart({
+                              userId: user?._id,
+                              productId: productSame?._id,
+                              quantity: 1
+                            })
+                          }
+                        >
+                          Add to cart
                         </button>
                       </div>
-                      <div className={cx('product-price')}>
-                        <span className={cx('regular-price')}>$80.00</span>
-                        <span className={cx('old-price')}>
-                          <del>$90.00</del>
-                        </span>
-                      </div>
-                    </div>
-                    <div className={cx('add-to-cart')}>
-                      <button className={cx('btn-add')}>Add to cart</button>
                     </div>
                   </div>
-                </div>
-                {/* end one product */}
-
-                {/* one product */}
-                <div className={cx('wrap-col-product')}>
-                  <div className={cx('col-product')}>
-                    <div className={cx('product-image')}>
-                      <Link to={'/product'}>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847065/Obrien%20Store/product/product-12_mgoaak.png'
-                          alt="Obrien's product"
-                        />
-                      </Link>
-                    </div>
-                    {/* <div className={cx('label-product')}>
-                  <span>Soldout</span>
-                </div> */}
-                    <div className={cx('product-context')}>
-                      <div className={cx('product-rating')}>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                      </div>
-                      <div className={cx('product-name')}>
-                        <h3>
-                          <Link to={'/product'}>Fresh Litchi</Link>
-                        </h3>
-
-                        <button>
-                          <FontAwesomeIcon icon={faThumbsUp} />
-                        </button>
-                      </div>
-                      <div className={cx('product-price')}>
-                        <span className={cx('regular-price')}>$80.00</span>
-                        <span className={cx('old-price')}>
-                          <del>$90.00</del>
-                        </span>
-                      </div>
-                    </div>
-                    <div className={cx('add-to-cart')}>
-                      <button className={cx('btn-add')}>Add to cart</button>
-                    </div>
-                  </div>
-                </div>
-                {/* end one product */}
-
-                {/* one product */}
-                <div className={cx('wrap-col-product')}>
-                  <div className={cx('col-product')}>
-                    <div className={cx('product-image')}>
-                      <Link to={'/product'}>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847066/Obrien%20Store/product/product-13_oltc0p.png'
-                          alt="Obrien's product"
-                        />
-                      </Link>
-                    </div>
-                    <div className={cx('label-product')}>
-                      <span>Soldout</span>
-                    </div>
-                    <div className={cx('product-context')}>
-                      <div className={cx('product-rating')}>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                      </div>
-                      <div className={cx('product-name')}>
-                        <h3>
-                          <Link to={'/product'}>custard apple</Link>
-                        </h3>
-
-                        <button>
-                          <FontAwesomeIcon icon={faThumbsUp} />
-                        </button>
-                      </div>
-                      <div className={cx('product-price')}>
-                        <span className={cx('regular-price')}>$80.00</span>
-                        <span className={cx('old-price')}>
-                          <del>$90.00</del>
-                        </span>
-                      </div>
-                    </div>
-                    <div className={cx('add-to-cart')}>
-                      <button className={cx('btn-add')}>Add to cart</button>
-                    </div>
-                  </div>
-                </div>
-                {/* end one product */}
-
-                {/* one product */}
-                <div className={cx('wrap-col-product')}>
-                  <div className={cx('col-product')}>
-                    <div className={cx('product-image')}>
-                      <Link to={'/product'}>
-                        <img
-                          src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1685847063/Obrien%20Store/product/product-11_ibyufb.webp'
-                          alt="Obrien's product"
-                        />
-                      </Link>
-                    </div>
-                    {/* <div className={cx('label-product')}>
-                  <span>Soldout</span>
-                </div> */}
-                    <div className={cx('product-context')}>
-                      <div className={cx('product-rating')}>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                      </div>
-                      <div className={cx('product-name')}>
-                        <h3>
-                          <Link to={'/product'}>Fresh Pineapple</Link>
-                        </h3>
-
-                        <button>
-                          <FontAwesomeIcon icon={faThumbsUp} />
-                        </button>
-                      </div>
-                      <div className={cx('product-price')}>
-                        <span className={cx('regular-price')}>$80.00</span>
-                        <span className={cx('old-price')}>
-                          <del>$90.00</del>
-                        </span>
-                      </div>
-                    </div>
-                    <div className={cx('add-to-cart')}>
-                      <button className={cx('btn-add')}>Add to cart</button>
-                    </div>
-                  </div>
-                </div>
+                ))}
                 {/* end one product */}
               </div>
             </div>

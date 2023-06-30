@@ -85,7 +85,7 @@ const CheckOut = () => {
               </h3>
             </div>
             {showCoupon && (
-              <div className={cx('wrap-coupon')}>
+              <div className={cx('wrap-coupon', 'disabled')}>
                 <form action=''>
                   <input type='text' placeholder='Coupon code' />
                   <input type='submit' value='Apply Coupon' className={cx('coupon-inner-btn')} />

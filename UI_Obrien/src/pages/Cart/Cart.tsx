@@ -219,7 +219,7 @@ const Cart = () => {
                     <button>Delete All Product</button>
                   </Popconfirm>
                 </div>
-                <div className={cx('apply-coupon')}>
+                <div className={cx('apply-coupon', 'disabled')}>
                   <form>
                     <input type='text' placeholder='Enter Your Coupon Code' />
                     <Button primary>Apply Coupon</Button>

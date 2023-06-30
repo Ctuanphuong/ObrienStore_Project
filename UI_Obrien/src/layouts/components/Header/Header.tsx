@@ -7,15 +7,32 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import styles from './Header.module.scss'
 import classNames from 'classnames/bind'
 import MenuDropdown from '~/components/Dropdown/Menu'
-import { products } from '~/data/products'
 import images from '~/assets/images'
 import getDecodedUser from '~/components/Auth/getDecodedUser'
 
+import { getCartUser } from '~/services/api/cart'
+
 const cx = classNames.bind(styles)
 const Header = () => {
-  const [headerTop, setHeaderTop] = useState('block')
   const user = getDecodedUser()
+  const [headerTop, setHeaderTop] = useState('block')
 
+  // Lấy thông tin cart
+  const [cart, setCart] = useState<any>({})
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (user && user !== undefined) {
+          const { data } = await getCartUser(user._id)
+          setCart(data.cart)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [user])
+
+  // custom notice sale
   useEffect(() => {
     if (window.location.pathname === '/') {
       setHeaderTop('block')
@@ -110,11 +127,11 @@ const Header = () => {
                       </li>
                     )}
 
-                    <MenuDropdown cartItems={products} offset={[-160, 34]}>
+                    <MenuDropdown cartItems={cart} offset={[-160, 34]}>
                       <li>
                         <NavLink to={`/cart/${user?._id}`} className={({ isActive }) => cx({ active: isActive })}>
                           <i className={cx('bi bi-handbag', 'bag-shopping')}></i>
-                          <span className={cx('notice')}>2</span>
+                          <span className={cx('notice')}>{cart?.products?.length}</span>
                         </NavLink>
                       </li>
                     </MenuDropdown>

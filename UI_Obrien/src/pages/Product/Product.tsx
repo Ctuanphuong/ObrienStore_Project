@@ -4,7 +4,6 @@ import classNames from 'classnames/bind'
 import BreadCrumbs from '~/components/BreadCrumbs/BreadCrumbs'
 import { faCartShopping, faDollar, faSearch, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faEye, faStar as faStarRegular, faThumbsUp } from '@fortawesome/free-regular-svg-icons'
-import { categories } from '~/data/categories'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { IProduct } from '~/interfaces/IProduct'
@@ -18,6 +17,22 @@ const Product = () => {
 
   // lấy thông tin user khi đã đăng nhập bằng cách gọi hàm getDecodedUser()
   const user = getDecodedUser()
+
+  const { productProvider } = useCombinedContext()
+  const [products, setProducts] = useState<IProduct[]>([])
+  useEffect(() => {
+    setProducts(productProvider.products)
+  }, [productProvider.products])
+
+  const recentProducts = products.slice(0, 3)
+
+  // Handle AddToCart
+  const onHandleAdd = (productId: any) =>
+    cartProvider.onAddToCart({
+      userId: user?._id,
+      productId: productId,
+      quantity: 1
+    })
 
   // phần chuyển đổi giao diện hiển thị sản phẩm theo dạng list hoặc grid
   const [grid, setGrid] = useState(true)
@@ -34,13 +49,6 @@ const Product = () => {
   }
 
   // end phần chuyển đổi giao diện
-  const { productProvider } = useCombinedContext()
-  const [products, setProducts] = useState<IProduct[]>([])
-  useEffect(() => {
-    setProducts(productProvider.products)
-  }, [productProvider.products])
-
-  const recentProducts = products.slice(0, 3)
 
   return (
     <>
@@ -68,23 +76,19 @@ const Product = () => {
 
                   {/* one col  */}
                   <div className={cx('widget-list')}>
-                    <h3 className={cx('widget-title')}>Menu Categories</h3>
+                    <h3 className={cx('widget-title')}>Categories</h3>
                     <nav>
                       <ul>
-                        {categories.map((category, index) => {
-                          return (
-                            <li key={index}>
-                              <button>{category.name}</button>
-                            </li>
-                          )
-                        })}
+                        <li>
+                          <button>Fruit</button>
+                        </li>
                       </ul>
                     </nav>
                   </div>
                   {/* one col  */}
 
                   {/* one col  */}
-                  <div className={cx('widget-list')}>
+                  {/* <div className={cx('widget-list')}>
                     <h3 className={cx('widget-title')}>Menu Categories</h3>
                     <nav>
                       <ul>
@@ -102,7 +106,7 @@ const Product = () => {
                         </li>
                       </ul>
                     </nav>
-                  </div>
+                  </div> */}
                   {/* one col  */}
 
                   {/* one col  */}
@@ -218,16 +222,7 @@ const Product = () => {
                           </div>
                         </div>
                         <div className={cx('add-to-cart')}>
-                          <button
-                            className={cx('btn-add')}
-                            onClick={() =>
-                              cartProvider.onAddToCart({
-                                userId: user?._id,
-                                productId: product._id,
-                                quantity: 1
-                              })
-                            }
-                          >
+                          <button className={cx('btn-add')} onClick={() => onHandleAdd(product._id)}>
                             Add to cart
                           </button>
                         </div>
@@ -274,13 +269,13 @@ const Product = () => {
                         </del>
                       </div>
                       <div className={cx('product-list-actions')}>
-                        <button>
+                        <button onClick={() => onHandleAdd(product._id)}>
                           <FontAwesomeIcon icon={faCartShopping} />
                         </button>
                         <button>
                           <FontAwesomeIcon icon={faThumbsUp} />
                         </button>
-                        <Link to={'/product'} className={cx('product-list-detail')}>
+                        <Link to={'#'} className={cx('product-list-detail')}>
                           <FontAwesomeIcon icon={faEye} />
                         </Link>
                       </div>

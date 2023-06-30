@@ -571,3 +571,9 @@
     transform: translateY(0);
   }
 }
+
+.disabled {
+  opacity: 30%;
+  user-select: none;
+  pointer-events: none;
+}

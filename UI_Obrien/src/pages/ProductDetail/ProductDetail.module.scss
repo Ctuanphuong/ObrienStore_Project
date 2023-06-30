@@ -395,9 +395,8 @@
 }
 
 .product-image img {
-  max-width: 100%;
-  min-width: 255px;
-  min-height: 255px;
+  width: 255px;
+  height: 255px;
   object-fit: cover;
   vertical-align: middle;
 }
@@ -542,4 +541,30 @@ svg {
       font-size: 24px;
     }
   }
+}
+
+.dollar-icon-large {
+  font-size: 20px;
+  margin-right: 2px;
+}
+
+.dollar-icon-old-price-large {
+  font-size: 14px;
+  margin-right: 1px;
+}
+
+.dollar-icon {
+  font-size: 15px;
+  margin-right: 2px;
+}
+
+.dollar-icon-old-price {
+  font-size: 12px;
+  margin-right: 2px;
+}
+
+.disabled {
+  opacity: 30%;
+  user-select: none;
+  pointer-events: none;
 }

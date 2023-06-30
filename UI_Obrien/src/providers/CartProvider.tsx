@@ -6,7 +6,7 @@ import { addToCart, checkOut, deleteAllProduct, deleteOneProduct, getCartUser, u
 import { useNavigate } from 'react-router-dom'
 const CartProvider = () => {
   const navigate = useNavigate()
-  const [cart, setCart] = useState([])
+  const [cart, setCart] = useState({})
   const [products, setProducts] = useState<IProduct[]>([])
   const [userId, setUserId] = useState('')
   const [reloadCart, setReloadCart] = useState(false)

@@ -1,3 +1,5 @@
+import { ICategory } from './ICategory'
+
 export interface IProduct {
   _id: string
   name: string
@@ -5,7 +7,7 @@ export interface IProduct {
   quantity: number
   description: string
   images: imagesProduct[]
-  categoryId: string
+  categoryId?: ICategory
   createdAt: Date
   updatedAt: Date
 }
