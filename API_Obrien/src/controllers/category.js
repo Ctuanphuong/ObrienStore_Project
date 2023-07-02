@@ -7,7 +7,7 @@ export const getCategories = async (req, res) => {
     page = 1,
     limit = 5,
     order = "asc",
-    sort = "createdAt",
+    sort = "name",
     keywords = "",
   } = req.query;
 

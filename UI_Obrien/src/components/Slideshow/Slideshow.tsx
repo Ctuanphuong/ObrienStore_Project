@@ -31,7 +31,7 @@ const SlideShow = ({ notice }: any) => {
             <h4 className={cx('small-title', { animate: animate })}>Healthy life with</h4>
             <h2 className={cx('large-title', { 'animate-2': animate })}>Natural Organic</h2>
             <div>
-              <Button to='/' dark className={cx('btn-shop', { 'animate-3': animate })}>
+              <Button to='/product' dark className={cx('btn-shop', { 'animate-3': animate })}>
                 Shop Now
               </Button>
             </div>

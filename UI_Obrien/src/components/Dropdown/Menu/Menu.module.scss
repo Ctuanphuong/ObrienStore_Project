@@ -24,13 +24,18 @@
 }
 .wrap-cart-items {
   width: 350px;
-  padding: 0px 20px;
+}
+.cart-wrapper {
+  max-height: 300px;
+  padding-right: 0 !important;
+  overflow-y: auto;
 }
 
 .cart-item {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  padding: 0 20px;
 }
 
 .cart-img {
@@ -97,6 +102,7 @@
   border-top: 1px solid #d8d8d8;
   border-bottom: 1px solid #d8d8d8;
   margin: 20px 0;
+  padding: 0 20px;
 
   p {
     font-family: var(--font-Oswald);
@@ -171,4 +177,31 @@
 .dollar-icon {
   font-size: 15px;
   margin-right: 1px;
+}
+
+.dis-none {
+  display: none;
+}
+
+.empty-cart {
+  display: none;
+  text-align: center;
+  padding: 0;
+}
+.dis-block {
+  display: block;
+}
+
+.wrap-empty-cart {
+  padding: 0px 20px;
+  h4 {
+    margin-bottom: 15px;
+  }
+}
+
+.disabled {
+  opacity: 30%;
+  cursor: none;
+  user-select: none;
+  pointer-events: none;
 }

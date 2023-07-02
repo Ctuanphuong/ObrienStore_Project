@@ -7,7 +7,7 @@ export interface IProduct {
   quantity: number
   description: string
   images: imagesProduct[]
-  categoryId?: ICategory
+  categoryId?: any
   createdAt: Date
   updatedAt: Date
 }

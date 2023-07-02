@@ -118,9 +118,8 @@
 }
 
 .product-image img {
-  max-width: 100%;
-  min-width: 255px;
-  min-height: 255px;
+  width: 255px;
+  height: 255px;
   object-fit: cover;
   vertical-align: middle;
 }

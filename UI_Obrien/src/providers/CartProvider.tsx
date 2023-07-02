@@ -128,7 +128,8 @@ const CartProvider = () => {
     redirectCheckOut,
     cart,
     products,
-    redirectResults
+    redirectResults,
+    reloadCart
   }
 }
 

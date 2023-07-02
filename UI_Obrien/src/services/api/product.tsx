@@ -1,8 +1,9 @@
 import { IProduct } from '~/interfaces/IProduct'
 import instance from './instance'
 
-export const getProducts = (currentPage: any, keywords: any) => {
-  return instance.get(`/products?page=${currentPage}&keywords=${keywords}`)
+export const getProducts = (currentPage: any, keywords: any, sortInfo: any) => {
+  const [sort, order] = sortInfo.split('-')
+  return instance.get(`/products?page=${currentPage}&keywords=${keywords}&sort=${sort}&order=${order}`)
 }
 
 export const getProduct = (id: string) => {

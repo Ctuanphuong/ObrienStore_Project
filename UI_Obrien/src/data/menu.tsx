@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
-import { categories } from './categories'
 
 const subMenuPage = [
   {
@@ -26,7 +25,7 @@ const subMenuPage = [
 ]
 export const menus = [
   { id: 1, title: 'Home', to: '/', icon: null, subMenu: false },
-  { id: 2, title: 'Product', to: '/product', icon: <FontAwesomeIcon icon={faAngleDown} />, subMenu: categories },
+  { id: 2, title: 'Product', to: '/product' },
   { id: 3, title: 'Pages', to: '/pages', icon: <FontAwesomeIcon icon={faAngleDown} />, subMenu: subMenuPage },
   { id: 4, title: 'Blog', to: '/blog', icon: null, subMenu: false },
   { id: 5, title: 'About', to: '/about', icon: null, subMenu: false },

@@ -9,22 +9,47 @@ import { useState, useEffect } from 'react'
 import { IProduct } from '~/interfaces/IProduct'
 import { useCombinedContext } from '~/providers/CombinedProvider'
 import getDecodedUser from '~/components/Auth/getDecodedUser'
+import { ICategory } from '~/interfaces/ICategory'
 
 const cx = classNames.bind(styles)
 
 const Product = () => {
-  const { cartProvider } = useCombinedContext()
+  const { cartProvider, productProvider, categoryProvider } = useCombinedContext()
 
   // lấy thông tin user khi đã đăng nhập bằng cách gọi hàm getDecodedUser()
   const user = getDecodedUser()
 
-  const { productProvider } = useCombinedContext()
   const [products, setProducts] = useState<IProduct[]>([])
-  useEffect(() => {
-    setProducts(productProvider.products)
-  }, [productProvider.products])
+  const [categories, setCategories] = useState<ICategory[]>([])
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
+  const [showAllProduct, setShowAllProduct] = useState(true)
+  const [keywords, setKeywords] = useState('')
 
-  const recentProducts = products.slice(0, 3)
+  // Get All Product
+  useEffect(() => {
+    // Nếu showAllProduct = false hoặc selectedCategoryId không tồn tại (chưa có danh mục nào được chọn), hiển thị toàn bộ sản phẩm
+    if (showAllProduct || !selectedCategoryId) {
+      setProducts(productProvider.products)
+    } else {
+      // Nếu đã chọn danh mục, hiển thị các sản phẩm có categoryId trùng với selectedCategoryId
+      const productOfCate = productProvider.products.filter(
+        (product: IProduct) => product.categoryId === selectedCategoryId
+      )
+      setProducts(productOfCate)
+    }
+  }, [showAllProduct, selectedCategoryId, productProvider.products])
+
+  // Get All Category
+  useEffect(() => {
+    setCategories(categoryProvider.categories)
+  }, [categoryProvider.categories])
+
+  const onHandleClick = (id: string) => {
+    setSelectedCategoryId(id)
+    setShowAllProduct(false)
+  }
+
+  const recentProducts = productProvider.products.slice(0, 3)
 
   // Handle AddToCart
   const onHandleAdd = (productId: any) =>
@@ -33,6 +58,45 @@ const Product = () => {
       productId: productId,
       quantity: 1
     })
+
+  // Handle Change Keywords
+  const onHandleChangeKeywords = (e: any) => {
+    if (e.target.value === '') {
+      productProvider.setKeywords('')
+      console.log(e.target.value)
+    } else {
+      setKeywords(e.target.value)
+    }
+  }
+
+  // Handle Change Sort Info
+  const onHandleChangeSort = (e: any) => {
+    productProvider.setSortInfo(e.target.value)
+  }
+
+  // Handle Change Keywords
+  const onHandleSubmit = (e: any) => {
+    e.preventDefault()
+    productProvider.setKeywords(keywords)
+  }
+
+  // render ra số lượng page
+  const renderPageNumbers = () => {
+    const pageNumbers = []
+    for (let i = 1; i <= productProvider.totalPages; i++) {
+      pageNumbers.push(
+        <li key={i}>
+          <button
+            onClick={() => productProvider.onChangePage(i)}
+            className={cx('number-btn', { 'active-pagination': i === productProvider.currentPage })}
+          >
+            {i}
+          </button>
+        </li>
+      )
+    }
+    return pageNumbers
+  }
 
   // phần chuyển đổi giao diện hiển thị sản phẩm theo dạng list hoặc grid
   const [grid, setGrid] = useState(true)
@@ -64,12 +128,17 @@ const Product = () => {
                   <div className={cx('widget-list')}>
                     <h3 className={cx('widget-title')}>Search</h3>
                     <div className={cx('search-box')}>
-                      <div className={cx('input-wrap')}>
-                        <input type='text' placeholder='Search Our Store' />
+                      <form onSubmit={onHandleSubmit} className={cx('input-wrap')}>
+                        <input
+                          type='text'
+                          placeholder='Search Our Store'
+                          name='keywords'
+                          onChange={onHandleChangeKeywords}
+                        />
                         <button>
                           <FontAwesomeIcon icon={faSearch} />
                         </button>
-                      </div>
+                      </form>
                     </div>
                   </div>
                   {/* one col */}
@@ -80,8 +149,13 @@ const Product = () => {
                     <nav>
                       <ul>
                         <li>
-                          <button>Fruit</button>
+                          <button onClick={() => setShowAllProduct(true)}>All Category</button>
                         </li>
+                        {categories.map((category: ICategory) => (
+                          <li key={category._id}>
+                            <button onClick={() => onHandleClick(category._id)}>{category.name}</button>
+                          </li>
+                        ))}
                       </ul>
                     </nav>
                   </div>
@@ -113,7 +187,7 @@ const Product = () => {
                   <div className={cx('widget-list')}>
                     <h3 className={cx('widget-title')}>Recent Products</h3>
 
-                    {recentProducts.map((product) => (
+                    {recentProducts.map((product: IProduct) => (
                       <div className={cx('sidebar-product')} key={product._id}>
                         <Link to={`/product/${product._id}`} className={cx('img-recent_product')}>
                           <img src={product.images[0].url} alt="Obrien's product" />
@@ -161,15 +235,20 @@ const Product = () => {
 
                 <div className={cx('shop-select')}>
                   <form action='shop-select-form'>
-                    <select name='sort_by' id='' className={cx('sort-product')} defaultValue={'1'}>
-                      <option value='1' style={{ padding: '15px 0px' }}>
+                    <select
+                      name='sortInfo'
+                      className={cx('sort-product')}
+                      onChange={onHandleChangeSort}
+                      defaultValue={'createdAt-desc'}
+                    >
+                      <option value='name-asc' style={{ padding: '15px 0px' }}>
                         Alphabetically, A-Z
                       </option>
-                      <option value='2'>Sort by popularity</option>
-                      <option value='3'>Sort by newness</option>
-                      <option value='4'>Sort by price: low to high</option>
-                      <option value='5'>Sort by price: high to low</option>
-                      <option value='6'>Product Name: Z</option>
+                      <option value='price-asc'>Sort by price: low to high</option>
+                      <option value='price-desc'>Sort by price: high to low</option>
+                      <option value='createdAt-desc'>Sort by date create: new to old</option>
+                      <option value='createdAt-asc'>Sort by date create: old to new</option>
+                      <option value='name-desc'>Alphabetically, Z-A</option>
                     </select>
                   </form>
                 </div>
@@ -178,111 +257,133 @@ const Product = () => {
 
               {/* Product wrapper */}
               <div className={cx('product-grid-wrapper', { 'grid-block': grid, 'grid-none': !grid })}>
-                <div className={cx('product-wrapper')}>
-                  {/* one product */}
-                  {products.map((product) => (
-                    <div className={cx('wrap-col-product')} key={product._id}>
-                      <div className={cx('col-product')}>
-                        <div className={cx('product-image')}>
-                          <Link to={`/product/${product._id}`}>
-                            <img src={product.images[0].url} alt="Obrien's product" />
-                          </Link>
-                        </div>
-                        {/* <div className={cx('label-product')}>
+                {products.length > 0 ? (
+                  <div className={cx('product-wrapper')}>
+                    {/* one product */}
+                    {products.map((product) => (
+                      <div className={cx('wrap-col-product')} key={product._id}>
+                        <div className={cx('col-product')}>
+                          <div className={cx('product-image')}>
+                            <Link to={`/product/${product._id}`}>
+                              <img src={product.images[0].url} alt="Obrien's product" />
+                            </Link>
+                          </div>
+                          {/* <div className={cx('label-product')}>
                     <span>Soldout</span>
                   </div> */}
-                        <div className={cx('product-context')}>
-                          <div className={cx('product-rating')}>
-                            <FontAwesomeIcon icon={faStar} />
-                            <FontAwesomeIcon icon={faStar} />
-                            <FontAwesomeIcon icon={faStar} />
-                            <FontAwesomeIcon icon={faStarRegular} />
-                            <FontAwesomeIcon icon={faStarRegular} />
-                          </div>
-                          <div className={cx('product-name')}>
-                            <h3>
-                              <Link to={`/product/${product._id}`}>{product.name}</Link>
-                            </h3>
+                          <div className={cx('product-context')}>
+                            <div className={cx('product-rating')}>
+                              <FontAwesomeIcon icon={faStar} />
+                              <FontAwesomeIcon icon={faStar} />
+                              <FontAwesomeIcon icon={faStar} />
+                              <FontAwesomeIcon icon={faStarRegular} />
+                              <FontAwesomeIcon icon={faStarRegular} />
+                            </div>
+                            <div className={cx('product-name')}>
+                              <h3>
+                                <Link to={`/product/${product._id}`}>{product.name}</Link>
+                              </h3>
 
-                            <button>
-                              <FontAwesomeIcon icon={faThumbsUp} />
-                            </button>
-                          </div>
-                          <div className={cx('product-price')}>
-                            <span className={cx('regular-price')}>
-                              <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
-                              {product.price}
-                            </span>
-                            <span className={cx('old-price')}>
-                              <del>
+                              <button>
+                                <FontAwesomeIcon icon={faThumbsUp} />
+                              </button>
+                            </div>
+                            <div className={cx('product-price')}>
+                              <span className={cx('regular-price')}>
                                 <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
                                 {product.price}
-                              </del>
-                            </span>
+                              </span>
+                              <span className={cx('old-price')}>
+                                <del>
+                                  <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                                  {product.price}
+                                </del>
+                              </span>
+                            </div>
+                          </div>
+                          <div className={cx('add-to-cart')}>
+                            <button className={cx('btn-add')} onClick={() => onHandleAdd(product._id)}>
+                              Add to cart
+                            </button>
                           </div>
                         </div>
-                        <div className={cx('add-to-cart')}>
-                          <button className={cx('btn-add')} onClick={() => onHandleAdd(product._id)}>
-                            Add to cart
-                          </button>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
 
-                  {/* end one product */}
-                </div>
+                    {/* end one product */}
+                  </div>
+                ) : (
+                  <div className={cx('wrap-not-found-product')}>
+                    <img
+                      src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1688184014/Obrien%20Store/messy/4968593-em-breve-novo-produto-lancamento-conceito-ilustracao-plano-design-eps10-simples-moderno-grafico-elemento-para-icone-pagina-de-destino-vazio-estado-ui-infografico-etc-vetor-removebg-preview_bvsbyy.png'
+                      alt='not found product'
+                    />
+                    <h3>Sorry, no products exist.</h3>
+                  </div>
+                )}
               </div>
+
               {/* Product wrapper */}
 
               {/* Product list wrapper */}
               <div className={cx('product-list-wrapper', { 'list-block': list, 'list-none': !list })}>
                 {/* one col */}
-                {products.map((product) => (
-                  <div className={cx('row-product-list')} key={product._id}>
-                    <div className={cx('product-list-img')}>
-                      <Link to={`/product/${product._id}`} className={cx('wrap-img-list')}>
-                        <img src={product.images[0].url} alt="Obrien's product" />
-                      </Link>
-                    </div>
-                    <div className={cx('product-list-content')}>
-                      <div className={cx('product-list-rating')}>
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStar} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                        <FontAwesomeIcon icon={faStarRegular} />
-                      </div>
-                      <div className={cx('product-list-title')}>
-                        <h4>
-                          <Link to={`/product/${product._id}`}>{product.name}</Link>
-                        </h4>
-                      </div>
-                      <div className={cx('product-list-price-box')}>
-                        <span className={cx('product-list-price')}>
-                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
-                          {product.price}
-                        </span>
-                        <del className={cx('product-list-old-price')}>
-                          <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-old-price')} />
-                          {product.price}
-                        </del>
-                      </div>
-                      <div className={cx('product-list-actions')}>
-                        <button onClick={() => onHandleAdd(product._id)}>
-                          <FontAwesomeIcon icon={faCartShopping} />
-                        </button>
-                        <button>
-                          <FontAwesomeIcon icon={faThumbsUp} />
-                        </button>
-                        <Link to={'#'} className={cx('product-list-detail')}>
-                          <FontAwesomeIcon icon={faEye} />
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <div className={cx('row-product-list')} key={product._id}>
+                      <div className={cx('product-list-img')}>
+                        <Link to={`/product/${product._id}`} className={cx('wrap-img-list')}>
+                          <img src={product.images[0].url} alt="Obrien's product" />
                         </Link>
                       </div>
-                      <p className={cx('list-product-content')}>{product.description}</p>
+                      <div className={cx('product-list-content')}>
+                        <div className={cx('product-list-rating')}>
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStar} />
+                          <FontAwesomeIcon icon={faStarRegular} />
+                          <FontAwesomeIcon icon={faStarRegular} />
+                        </div>
+                        <div className={cx('product-list-title')}>
+                          <h4>
+                            <Link to={`/product/${product._id}`}>{product.name}</Link>
+                          </h4>
+                        </div>
+                        <div className={cx('product-list-price-box')}>
+                          <span className={cx('product-list-price')}>
+                            <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon')} />
+                            {product.price}
+                          </span>
+                          <del className={cx('product-list-old-price')}>
+                            <FontAwesomeIcon icon={faDollar} className={cx('dollar-icon-old-price')} />
+                            {product.price}
+                          </del>
+                        </div>
+                        <div className={cx('product-list-actions')}>
+                          <button onClick={() => onHandleAdd(product._id)}>
+                            <FontAwesomeIcon icon={faCartShopping} />
+                          </button>
+                          <button>
+                            <FontAwesomeIcon icon={faThumbsUp} />
+                          </button>
+                          <Link to={'#'} className={cx('product-list-detail')}>
+                            <FontAwesomeIcon icon={faEye} />
+                          </Link>
+                        </div>
+                        <p className={cx('list-product-content')}>{product.description}</p>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className={cx('wrap-not-found-product')}>
+                    <img
+                      src='https://res.cloudinary.com/phuong-fpoly/image/upload/v1688184014/Obrien%20Store/messy/4968593-em-breve-novo-produto-lancamento-conceito-ilustracao-plano-design-eps10-simples-moderno-grafico-elemento-para-icone-pagina-de-destino-vazio-estado-ui-infografico-etc-vetor-removebg-preview_bvsbyy.png'
+                      alt='not found product'
+                    />
+                    <h3>Sorry, no products exist.</h3>
                   </div>
-                ))}
+                )}
+
                 {/* one col */}
               </div>
               {/* Product list wrapper */}
@@ -293,20 +394,27 @@ const Product = () => {
                   <nav className={cx('pagination-wrap')}>
                     <ul>
                       <li>
-                        <i className='bi bi-arrow-left'></i>
+                        <button
+                          className={cx({ 'disabled-btn': productProvider.currentPage === 1 })}
+                          disabled={productProvider.currentPage === 1}
+                          onClick={() => productProvider.onChangePage(productProvider.currentPage - 1)}
+                        >
+                          <i className='bi bi-arrow-left'></i>
+                        </button>
                       </li>
+                      {renderPageNumbers()}
                       <li>
-                        <a className={cx('active-pagination')}>1</a>
-                      </li>
-                      <li>
-                        <a>2</a>
-                      </li>
-                      <li className={cx('disabled-btn')}>
-                        <i className='bi bi-arrow-right'></i>
+                        <button
+                          className={cx({ 'disabled-btn': productProvider.currentPage === productProvider.totalPages })}
+                          disabled={productProvider.currentPage === productProvider.totalPages}
+                          onClick={() => productProvider.onChangePage(productProvider.currentPage + 1)}
+                        >
+                          <i className='bi bi-arrow-right'></i>
+                        </button>
                       </li>
                     </ul>
                   </nav>
-                  <p>Showing 1 - 9 of {products.length} products</p>
+                  <p>There are {products.length} products on this page</p>
                 </div>
               </div>
               {/* Bottom toolbar wrapper */}

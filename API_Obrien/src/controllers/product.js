@@ -6,7 +6,7 @@ import { productSchema, productSchemaUpdate } from "../schemas/product.js";
 export const getProducts = async (req, res) => {
   const {
     page = 1,
-    limit = 5,
+    limit = 9,
     order = "asc",
     sort = "createdAt",
     keywords = "",

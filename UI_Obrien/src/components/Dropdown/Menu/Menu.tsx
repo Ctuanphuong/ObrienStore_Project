@@ -24,31 +24,43 @@ const Menu = ({ items, cartItems, offset = [0, 29], user = '', children }: any) 
 
   const renderItem = () => {
     if (items) {
-      return items.map((item: object, index: number) => {
+      return items?.map((item: object, index: number) => {
         return <MenuItem key={index} data={item}></MenuItem>
       })
     } else if (cartItems) {
       return (
-        <div className={cx('wrap-cart-items')}>
-          {productsCart?.map((product: object, index: number) => {
-            return <MenuItem key={index} cartData={product}></MenuItem>
-          })}
-          <div className={cx('wrap-total')}>
-            <h3>Total: </h3>
-            <p>
-              <span style={{ marginRight: 2 }}>$</span>
-              {cartItems?.totalOrder}
-            </p>
+        <>
+          <div className={cx('wrap-cart-items', { 'dis-none': productsCart?.length === 0 || !userCart })}>
+            <div className={cx('cart-wrapper')}>
+              {productsCart?.map((product: object, index: number) => {
+                return <MenuItem key={index} cartData={product}></MenuItem>
+              })}
+            </div>
+            <div className={cx('wrap-total')}>
+              <h3>Total: </h3>
+              <p>
+                <span style={{ marginRight: 2 }}>$</span>
+                {cartItems?.totalOrder}
+              </p>
+            </div>
+            <div className={cx('wrap-btn-cart')}>
+              <Button to={`/cart/${userCart?._id}`} secondary>
+                View Cart
+              </Button>
+              <Button to={`/checkout/${userCart?._id}`} secondary>
+                Checkout
+              </Button>
+            </div>
           </div>
-          <div className={cx('wrap-btn-cart')}>
-            <Button to={`/cart/${userCart?._id}`} secondary>
-              View Cart
-            </Button>
-            <Button to={'/checkout'} secondary>
-              Checkout
-            </Button>
+          <div className={cx('empty-cart', { 'dis-block': productsCart?.length === 0 || !userCart })}>
+            <div className={cx('wrap-empty-cart')}>
+              <h4>Your shopping cart is empty. Choose the right product for you.</h4>
+              <Button to={'/product'} regular>
+                Shop now
+              </Button>
+            </div>
           </div>
-        </div>
+        </>
       )
     } else if (user) {
       return (

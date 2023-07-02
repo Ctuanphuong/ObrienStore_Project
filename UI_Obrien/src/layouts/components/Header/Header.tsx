@@ -11,9 +11,11 @@ import images from '~/assets/images'
 import getDecodedUser from '~/components/Auth/getDecodedUser'
 
 import { getCartUser } from '~/services/api/cart'
+import { useCombinedContext } from '~/providers/CombinedProvider'
 
 const cx = classNames.bind(styles)
 const Header = () => {
+  const { cartProvider } = useCombinedContext()
   const user = getDecodedUser()
   const [headerTop, setHeaderTop] = useState('block')
 
@@ -30,7 +32,7 @@ const Header = () => {
         console.log(error)
       }
     })()
-  }, [user])
+  }, [user, cartProvider.reloadCart])
 
   // custom notice sale
   useEffect(() => {
@@ -127,7 +129,7 @@ const Header = () => {
                       </li>
                     )}
 
-                    <MenuDropdown cartItems={cart} offset={[-160, 34]}>
+                    <MenuDropdown cartItems={cart} offset={[-80, 30]}>
                       <li>
                         <NavLink to={`/cart/${user?._id}`} className={({ isActive }) => cx({ active: isActive })}>
                           <i className={cx('bi bi-handbag', 'bag-shopping')}></i>

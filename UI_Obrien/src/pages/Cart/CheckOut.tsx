@@ -7,14 +7,13 @@ import { useCombinedContext } from '~/providers/CombinedProvider'
 import { ICart } from '~/interfaces/ICart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { CheckOutSchema } from '~/schemas/cart'
 
 const cx = classNames.bind(styles)
 
 const CheckOut = () => {
   const { userId } = useParams()
-  const navigate = useNavigate()
   const { cartProvider } = useCombinedContext()
   const [showCoupon, setShowCoupon] = useState(false)
   const [cart, setCart] = useState<ICart>()
@@ -72,7 +71,7 @@ const CheckOut = () => {
     setShowCoupon(!showCoupon)
   }
 
-  return cartProvider.redirectCheckOut ? (
+  return (
     <>
       <BreadCrumbs title={'Checkout'} page={'Checkout'} />
       <div className={cx('checkout-area')}>
@@ -236,7 +235,7 @@ const CheckOut = () => {
                         disabled
                       />
                       <label htmlFor='bank' className={cx('disable-method')}>
-                        Bank transfer (developing...)
+                        Bank transfer (Processing...)
                       </label>
                     </div>
 
@@ -250,7 +249,7 @@ const CheckOut = () => {
                         disabled
                       />
                       <label htmlFor='momo' className={cx('disable-method')}>
-                        Via Momo (developing...)
+                        Via Momo (Processing...)
                       </label>
                     </div>
                     <div className={cx('option-payment')}>
@@ -263,7 +262,7 @@ const CheckOut = () => {
                         disabled
                       />
                       <label htmlFor='paypal' className={cx('disable-method')}>
-                        Via Paypal (developing...)
+                        Via Paypal (Processing...)
                       </label>
                     </div>
                     <div className={cx('option-payment')}>
@@ -289,8 +288,6 @@ const CheckOut = () => {
         </div>
       </div>
     </>
-  ) : (
-    navigate('/')
   )
 }
 

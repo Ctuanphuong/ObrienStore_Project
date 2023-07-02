@@ -9,7 +9,7 @@ export const CheckOutSchema = Joi.object({
     .required()
     .pattern(/^\S.*$/)
     .messages({
-      'string.empty': 'The "name" field cannot be empty',
+      'string.empty': 'The "name" field cannot be empty!',
       'string.min': 'Name must be at least {#limit} characters.',
       'string.max': 'Name cannot exceed {#limit} characters.',
       'any.required': 'The "name" field is required!',
@@ -40,7 +40,7 @@ export const CheckOutSchema = Joi.object({
     .required()
     .pattern(/^\S.*$/)
     .messages({
-      'string.empty': 'The "address" field cannot be empty',
+      'string.empty': 'The "address" field cannot be empty!',
       'string.min': 'Address must be at least {#limit} characters.',
       'string.max': 'Address cannot exceed {#limit} characters.',
       'any.required': 'The "address" field is required!',

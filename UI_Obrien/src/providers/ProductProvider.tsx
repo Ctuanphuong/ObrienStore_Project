@@ -11,19 +11,23 @@ const ProductProvider = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [keywords, setKeywords] = useState('')
-
+  const [sortInfo, setSortInfo] = useState('createdAt-desc')
+  const [reload, setReload] = useState(false)
   useEffect(() => {
     ;(async () => {
       try {
-        const { data } = await getProducts(currentPage, keywords)
+        const { data } = await getProducts(currentPage, keywords, sortInfo)
         const { products } = data
         setProducts(products.docs)
         setTotalPages(products.totalPages)
       } catch (error: any) {
         console.error(error)
+        if ((error.response.data.message = "Couldn't find any products in the list!")) {
+          message.error(error.response.data.message)
+        }
       }
     })()
-  }, [currentPage, keywords])
+  }, [currentPage, keywords, sortInfo, reload])
 
   // xử lý khi chuyển trang( next hoặc prev)
   const onChangePage = (page: number) => {
@@ -35,6 +39,7 @@ const ProductProvider = () => {
     try {
       const { data } = await addProduct(category)
       setProducts([...products, data.product])
+      await setReload(!reload)
       message.success(`Create new product successfully!`)
       navigate('/admin/products')
     } catch (error: any) {
@@ -66,6 +71,7 @@ const ProductProvider = () => {
     try {
       await deleteProduct(id)
       setProducts(products.filter((p) => p._id !== id))
+      await setReload(!reload)
       message.success(`Product delete successfully!`)
     } catch (error: any) {
       if (error.response.data.message) {
@@ -83,7 +89,8 @@ const ProductProvider = () => {
     currentPage,
     totalPages,
     onChangePage,
-    setKeywords
+    setKeywords,
+    setSortInfo
   }
 }
 
