@@ -12,7 +12,7 @@ export const generalAccessToken = (payload) => {
 
 // tạo refresh token
 export const generalRefreshToken = (payload) => {
-  const refreshToken = jwt.sign({ payload }, process.env.JWT_PRIVATE, {
+  const refreshToken = jwt.sign({ payload }, process.env.JWT_RFT_PRIVATE, {
     expiresIn: "7d",
   });
   return refreshToken;

@@ -1,5 +1,5 @@
-import { Table } from 'antd'
-import { Input, Space } from 'antd'
+import { Table, Input, Space } from 'antd'
+
 import styles from '../Product/Product.module.scss'
 import classNames from 'classnames/bind'
 import { useEffect, useState } from 'react'

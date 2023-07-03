@@ -3,12 +3,9 @@ import { Button, Form, Input, Radio, Select } from 'antd'
 import styles from '../Category/Category.module.scss'
 import classNames from 'classnames/bind'
 import { useCombinedContext } from '~/providers/CombinedProvider'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { IBills } from '~/interfaces/IBill'
 import getDecodedUser from '~/components/Auth/getDecodedUser'
-import { IProductCart } from '~/interfaces/ICart'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDollar } from '@fortawesome/free-solid-svg-icons'
 
 const cx = classNames.bind(styles)
 type SizeType = Parameters<typeof Form>[0]['size']

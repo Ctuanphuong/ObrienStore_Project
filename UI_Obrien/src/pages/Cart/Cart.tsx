@@ -8,8 +8,8 @@ import Button from '~/components/Button/Button'
 import { useEffect, useState } from 'react'
 import { useCombinedContext } from '~/providers/CombinedProvider'
 import { ICart, IDeleteCart, IDeleteOneProductCart, IProductCart } from '~/interfaces/ICart'
-import { Empty } from 'antd'
-import { Popconfirm } from 'antd'
+import { Empty, Popconfirm } from 'antd'
+
 import { QuestionCircleOutlined } from '@ant-design/icons'
 
 const cx = classNames.bind(styles)

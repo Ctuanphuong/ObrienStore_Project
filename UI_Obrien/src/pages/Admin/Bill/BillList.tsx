@@ -1,5 +1,5 @@
-import { Table } from 'antd'
-import { Input, Space } from 'antd'
+import { Table, Input, Space } from 'antd'
+
 import styles from './Bill.module.scss'
 import classNames from 'classnames/bind'
 import { billColumns } from '~/data/columns'

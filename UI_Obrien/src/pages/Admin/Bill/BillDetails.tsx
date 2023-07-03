@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './Bill.module.scss'
 import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
-import { faDollar, faMoneyCheckDollar, faPrint } from '@fortawesome/free-solid-svg-icons'
+import { faDollar, faPrint } from '@fortawesome/free-solid-svg-icons'
 import { Link, useParams } from 'react-router-dom'
 import { useCombinedContext } from '~/providers/CombinedProvider'
 import { useState, useEffect } from 'react'

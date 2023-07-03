@@ -23,6 +23,9 @@ export const productColumns = (props: ProductProps) => {
       title: '#',
       key: 'index',
       render: (text: any, record: any, index: any) => {
+        console.log(text)
+        console.log(record)
+
         return index + 1
       }
     },
@@ -149,7 +152,7 @@ export const CategoryColumns = (props: CategoryProps) => {
     {
       title: '#',
       key: 'index',
-      render: (text: any, record: any, index: any) => {
+      render: (_text: any, _record: any, index: any) => {
         return index + 1
       }
     },
@@ -208,12 +211,12 @@ export const CategoryColumns = (props: CategoryProps) => {
   return columns
 }
 
-export const billColumns = (props: any) => {
+export const billColumns = (_props: any) => {
   const columns: any = [
     {
       title: '#',
       key: 'index',
-      render: (text: any, record: any, index: any) => {
+      render: (_text: any, _record: any, index: any) => {
         return index + 1
       }
     },
