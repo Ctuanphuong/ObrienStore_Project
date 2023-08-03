@@ -149,7 +149,7 @@ const ProductCreate = () => {
           name='images'
           rules={[{ required: true, message: 'Please upload product illustrations!' }]}
         >
-          <Upload action='http://localhost:8000/api/images/upload' listType='picture' name='images' multiple>
+          <Upload action='https://cx3crx-8000.csb.app/api/images/upload' listType='picture' name='images' multiple>
             <Button icon={<UploadOutlined />}>Choose images</Button>
           </Upload>
         </Form.Item>

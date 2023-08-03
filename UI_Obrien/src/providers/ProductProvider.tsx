@@ -22,9 +22,9 @@ const ProductProvider = () => {
         setTotalPages(products.totalPages)
       } catch (error: any) {
         console.error(error)
-        if ((error.response.data.message = "Couldn't find any products in the list!")) {
-          message.error(error.response.data.message)
-        }
+        // if ((error.response.data.message = "Couldn't find any products in the list!")) {
+        //   message.error(error.response.data.message)
+        // }
       }
     })()
   }, [currentPage, keywords, sortInfo, reload])
